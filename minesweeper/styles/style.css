@@ -1,0 +1,189 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #1c1e3c;
+}
+
+.game-title {
+  text-align: center;
+  margin: 40px;
+  color: #e8d3c8;
+  letter-spacing: 0.9px;
+}
+
+.container {
+  width: 330px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #272a57;
+  border-radius: 8px;
+  box-shadow: 0 0 10px #6061bd;
+}
+
+.menu {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  color: #e8d3c8;
+  letter-spacing: 0.9px;
+}
+
+.settings {
+  width: 30px;
+  height: 30px;
+  background-image: url('../assets/img/settings.png');
+  background-repeat: no-repeat, repeat;
+  background-size: 30px 30px;
+  transition: 0.7s;
+}
+
+.settings:hover{
+  cursor: pointer;
+  transform: rotate(-45deg);
+}
+
+.settings:hover > * {
+  transform: rotate(45deg);
+}
+
+.info {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+  color: #e8d3c8;
+  letter-spacing: 0.9px;
+}
+
+.info__clicks,
+.info__timer,
+.info__flags {
+  display: flex;
+  justify-content: space-around;
+  width: 55px;
+  height: 28px;
+  padding: 4px;
+  color: #000000;
+  background-color: #daa78c;
+  border-radius: 4px;
+  line-height: 22px;
+  background: #daa78c radial-gradient(circle at 0 0, #daa78cca, #daa78ccc);
+  box-shadow: inset #50392cde 2px 2px 4px, inset #7c5441dc -2px -2px 4px, #50392cde -2px -2px 4px -2px;
+}
+
+.info__timer {
+  width: 75px;
+}
+
+.icon {
+  width: 26px;
+  height: 26px;
+  background-repeat: no-repeat, repeat;
+  background-size: 20px 20px;
+}
+
+.clicks__icon {
+  background-image: url('../assets/img/click.png');
+}
+
+.timer__icon {
+  background-image: url('../assets/img/time.png');
+}
+
+.flags__icon {
+  background-image: url('../assets/img/mine.png');
+  background-position: 0px 1px;
+}
+
+.field {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  width: 270px;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: 10px solid #1A1b54;
+}
+
+.cell {
+  width: 25px;
+  height: 25px;
+  font-size: 13px;
+  background-color: #43478f;
+  border-radius: 2px;
+  border: 1px solid #1a1b54;
+  text-align: center;
+  line-height: 25px;
+  font-weight: 600;
+  box-shadow: inset #0000005c -3px -3px 8px, inset #dfdfdf3a 2px 2px 4px, #0000005c 3px 3px 8px -3px;
+  transition: 0.4s;
+}
+
+.cell:hover {
+  cursor: pointer;
+  background-color: #daa78cd0;
+}
+
+.cell:active {
+  cursor: pointer;
+  background-color: #9c9ed4;
+  box-shadow: inset #444775d5 2px 2px 4px, inset #7c7fc0d5 -2px -2px 4px, #444775d5 -2px -2px 4px -2px;
+}
+
+.cell.flag {
+  background-color: #daa78c;
+  background-image: url('../assets/img/flag.png');
+  background-repeat: no-repeat, repeat;
+  background-size: 18px 18px;
+  background-position: 4px 3px;
+}
+
+.cell.mine {
+  background-color: #b880bc;
+  background-image: url('../assets/img/mine.png');
+  background-repeat: no-repeat, repeat;
+  background-size: 20px 20px;
+  background-position: 2px 2px;
+}
+
+.cell.mine-failed {
+  background-color: #d03838;
+  background-image: url('../assets/img/mine.png');
+  background-repeat: no-repeat, repeat;
+  background-size: 20px 20px;
+  background-position: 2px 2px;
+}
+
+.cell.empty {
+  background: #9c9ed4 radial-gradient(circle at 0 0, #9c9ed4cf, #9c9ed4cb);
+  box-shadow: inset #444775d5 2px 2px 4px, inset #7c7fc0d5 -2px -2px 4px, #444775d5 -2px -2px 4px -2px;
+}
+
+.cell.danger-1 {
+  color: #0c39a2;
+  background-color: #9c9ed4;
+}
+
+.cell.danger-2 {
+  color: #235c21;
+  background-color: #9c9ed4;
+}
+
+.cell.danger-3 {
+  color: #897d16;
+  background-color: #9c9ed4;
+}
+
+.cell.danger-4 {
+  color: #a96c1d;
+  background-color: #9c9ed4;
+}
+
+.cell.danger-5 {
+  color: #9e1b35;
+  background-color: #9c9ed4;
+}
