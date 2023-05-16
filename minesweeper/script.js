@@ -72,6 +72,8 @@ game.appendChild(gameField);
 gameField.classList.add('field');
 
 
+// CREATE GAME FIELD
+
 function initField() {
   for (let i = 0; i < 100; i += 1) {
     const cell = document.createElement('div');
@@ -79,5 +81,41 @@ function initField() {
     gameField.appendChild(cell);
   }
 }
-
 initField();
+
+
+
+// TIMER 
+
+let second = 00,
+  minute = 00,
+  hour = 00;
+
+function timer() {
+  second++;
+  if (second === 60) {
+    minute++;
+    second = 0;
+  }
+  if (minute === 60) {
+    hour++;
+    minute = 0;
+  }
+  const time = [hour, minute, second].map(function (element) {
+    if (element < 10) {
+      return '0' + element;
+    } else {
+      return element;
+    }
+  })
+  timerNumber.innerHTML = time.join(':');
+}
+
+function countTime() {
+  setInterval(
+    timer,
+    1000
+  )
+}
+countTime();
+
