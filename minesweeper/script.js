@@ -40,9 +40,6 @@ flagsIcon.className = 'flags__icon';
 flagsNumber.className = 'flags__number';
 gameField.className = 'game__field';
 
-h1.innerHTML = 'Minesweeper';
-newGame.innerHTML = 'New game';
-
 body.appendChild(header);
 header.appendChild(h1);
 body.appendChild(main);
@@ -71,18 +68,124 @@ infoFlags.appendChild(flagsNumber);
 game.appendChild(gameField);
 gameField.classList.add('field');
 
+h1.innerHTML = 'Minesweeper';
+newGame.innerHTML = 'New game';
+timerNumber.innerHTML = '00:00:00';
 
-// CREATE GAME FIELD
+// VARIABLES
 
-function initField() {
-  for (let i = 0; i < 100; i += 1) {
-    const cell = document.createElement('div');
-    cell.className = 'cell';
-    gameField.appendChild(cell);
+let size = 10;
+let minesAmount = 10;
+let field = Math.pow(size, 2);
+let mines = [];
+let dangerNumbers = [];
+let x = 0; // coordinate x in the game field
+let y = 0; // coordinate y in the game field
+let click = '2,2'; // example
+
+
+const init = () => {
+  // CREATE GAME FIELD
+  function initField() {
+    for (let i = 0; i < 100; i += 1) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      gameField.appendChild(cell);
+    }
   }
-}
-initField();
+  initField();
 
+  let cells = document.querySelectorAll('.cell');
+
+  // SET COORDINATES TO CELLS
+  cells.forEach((elem) => {
+    elem.setAttribute('cell-coords', `${x},${y}`);
+    x++;
+    if (x >= size) {
+      x = 0;
+      y++;
+    }
+  });
+
+  // SET MINES
+  function setMines() {
+    function getRandomSet(min, max, n) {
+      let res = new Set();
+      while (res.size < n) {
+        let random = Math.floor(Math.random() * (max - min + 1)) + min;
+        res.add(random);
+      }
+      return res;
+    }
+    let mySet = getRandomSet(0, field - 1, minesAmount);
+    for (const item of mySet) {
+      if (item < 10) {
+        mines.push('0' + ',' + String(item).split('').join(','));
+      } else {
+        mines.push(String(item).split('').join(','));
+      }
+    }
+    if (mines.includes(click)) {
+      mines = [];
+      setMines();
+    }
+  }
+  setMines();
+
+  mines.forEach(mine => {
+    let coords = mine.split(',');
+      let minedCell = document.querySelectorAll(`[cell-coords="${parseInt(coords[0])},${parseInt(coords[1])}"]`)[0];
+      minedCell.classList.add('mined');
+    }
+  )
+
+  // ADD NUMBERS TO CELLS AROUND MINES
+  function setDangerNumbers() {
+    mines.forEach(item => {
+      let x = Number(item[0]);
+      let y = Number(item[2]);
+      if (x > 0) {
+        dangerNumbers.push(`${x-1},${y}`);
+        if (y < (size - 1)) {
+          dangerNumbers.push(`${x-1},${y+1}`);
+        }
+      }
+      if (x < size - 1) {
+        dangerNumbers.push(`${x+1},${y}`);
+      }
+      if (y > 0) {
+        dangerNumbers.push(`${x},${y-1}`);
+        if (x < (size - 1)) {
+          dangerNumbers.push(`${x+1},${y-1}`);
+        }
+      }
+      if (y < size - 1) {
+        dangerNumbers.push(`${x},${y+1}`);
+      }
+      if (x > 0 && y > 0) {
+        dangerNumbers.push(`${x-1},${y-1}`);
+      }
+      if (x < (size - 1) && y < (size - 1)) {
+        dangerNumbers.push(`${x+1},${y+1}`);
+      }
+    });
+  }
+  setDangerNumbers();
+
+  dangerNumbers.forEach(number => {
+    let coords = number.split(',');
+    let dangerCell = document.querySelectorAll(`[cell-coords="${parseInt(coords[0])},${parseInt(coords[1])}"]`)[0];
+    let numberOfMines = parseInt(dangerCell.getAttribute('cell-number'));
+    if (!numberOfMines) {
+      numberOfMines = 0;
+    }
+    numberOfMines = numberOfMines + 1;
+    dangerCell.setAttribute('cell-number', numberOfMines);
+    dangerCell.classList.add(`danger-${numberOfMines}`);
+    dangerCell.innerHTML = numberOfMines;
+  });
+};
+init();
 
 
 // TIMER 
@@ -118,4 +221,7 @@ function countTime() {
   )
 }
 countTime();
+
+
+
 

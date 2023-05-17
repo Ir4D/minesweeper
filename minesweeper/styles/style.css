@@ -142,8 +142,40 @@
   background-position: 4px 3px;
 }
 
-.cell.mine {
-  background-color: #b880bc;
+.cell.danger-1 {
+  background-color: #5380e1b8;
+}
+
+.cell.danger-2 {
+  background-color: #42b697b5;
+}
+
+.cell.danger-3 {
+  background-color: #41c3449f;
+}
+
+.cell.danger-4 {
+  background-color: #c9b929ce;
+}
+
+.cell.danger-5 {
+  background-color: #df8b32cb;
+}
+
+.cell.danger-6 {
+  background-color: #d932d6ac;
+}
+
+.cell.danger-7 {
+  background-color: #c24479c5;
+}
+
+.cell.danger-8 {
+  background-color: #ba1414cd;
+}
+
+.cell.mined {
+  background-color: #bd5289cb;
   background-image: url('../assets/img/mine.png');
   background-repeat: no-repeat, repeat;
   background-size: 20px 20px;
@@ -151,7 +183,7 @@
 }
 
 .cell.mine-failed {
-  background-color: #d03838;
+  background-color: #b30101;
   background-image: url('../assets/img/mine.png');
   background-repeat: no-repeat, repeat;
   background-size: 20px 20px;
@@ -161,29 +193,4 @@
 .cell.empty {
   background: #9c9ed4 radial-gradient(circle at 0 0, #9c9ed4cf, #9c9ed4cb);
   box-shadow: inset #444775d5 2px 2px 4px, inset #7c7fc0d5 -2px -2px 4px, #444775d5 -2px -2px 4px -2px;
-}
-
-.cell.danger-1 {
-  color: #0c39a2;
-  background-color: #9c9ed4;
-}
-
-.cell.danger-2 {
-  color: #235c21;
-  background-color: #9c9ed4;
-}
-
-.cell.danger-3 {
-  color: #897d16;
-  background-color: #9c9ed4;
-}
-
-.cell.danger-4 {
-  color: #a96c1d;
-  background-color: #9c9ed4;
-}
-
-.cell.danger-5 {
-  color: #9e1b35;
-  background-color: #9c9ed4;
 }
