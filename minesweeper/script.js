@@ -18,6 +18,7 @@ const infoFlags = document.createElement('div');
 const flagsIcon = document.createElement('div');
 const flagsNumber = document.createElement('div');
 const gameField = document.createElement('div');
+const gameModal = document.createElement('div');
 
 body.className = 'body';
 header.className = 'header';
@@ -39,6 +40,7 @@ infoFlags.className = 'info__flags';
 flagsIcon.className = 'flags__icon';
 flagsNumber.className = 'flags__number';
 gameField.className = 'game__field';
+gameModal.className = 'game-modal';
 
 body.appendChild(header);
 header.appendChild(h1);
@@ -47,6 +49,7 @@ main.appendChild(container);
 container.appendChild(menu);
 menu.appendChild(newGame);
 menu.appendChild(settings);
+container.appendChild(gameModal);
 container.appendChild(game);
 game.appendChild(gameInfo);
 gameInfo.classList.add('info');
@@ -87,6 +90,7 @@ let dangerMap = new Map();
 let clicksCount = 0;
 let flagsAmount = minesAmount;
 let flaggedCells = new Set();
+let timeCount;
 clicksNumber.innerHTML = clicksCount;
 flagsNumber.innerHTML = flagsAmount;
 
@@ -349,9 +353,15 @@ function handleClick(e) {
     if (!mines.includes(openedCellCoords) && !dangerNumbers.includes(openedCellCoords)) {
       findEmptyCells(targetCellX, targetCellY);
     } else if (mines.includes(openedCellCoords)) {
-      console.log('The game is failed');
-    } else if (dangerNumbers.includes(openedCellCoords)) {
-      console.log('Nothing to do, it is a dangerous cell');
+      gameModal.innerHTML = '';
+      setModalWindow();
+      const modal = document.querySelector('.modal')
+      const closeBtn = document.querySelector('.close')
+      modal.style.display = 'block';
+      closeBtn.addEventListener('click', () => {
+        modal.style.display = 'none';
+      })
+      stopGame();
     }
   }
 }
@@ -409,7 +419,7 @@ function timer() {
 }
 
 function countTime() {
-  setInterval(
+  timeCount = setInterval(
     timer,
     1000
   )
@@ -417,5 +427,28 @@ function countTime() {
 countTime();
 
 
+// FAILED GAME
 
+function setModalWindow() {
+  let modalWindow = document.createElement('div');
+  modalWindow.classList.add('modal');
+  let modalCloseBtn = document.createElement('span');
+  modalCloseBtn.classList.add('close');
+  modalWindow.appendChild(modalCloseBtn);
+  let modalText = document.createElement('div');
+  modalText.classList.add('modal-text');
+  modalWindow.appendChild(modalText);
+  modalText.innerHTML = `GAME OVER <br> Game time: ${timerNumber.innerText}`;
+  gameModal.appendChild(modalWindow);
+}
+
+
+function stopGame() {
+  gameField.addEventListener('click', handler, true);
+  function handler(e) {
+    e.stopPropagation();
+    e.preventDefault();
+  }
+  clearInterval(timeCount);
+}
 
