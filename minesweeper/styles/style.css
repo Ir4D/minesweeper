@@ -134,6 +134,11 @@
   box-shadow: inset #444775d5 2px 2px 4px, inset #7c7fc0d5 -2px -2px 4px, #444775d5 -2px -2px 4px -2px;
 }
 
+.cell.opened {
+  background: #b1b3e1 radial-gradient(circle at 0 0, #ffffff37, #ffffff3b);
+  box-shadow: inset #616494d5 2px 2px 4px, inset #9598cbd5 -2px -2px 4px, #585b8bd5 -2px -2px 4px -2px;
+}
+
 .cell.flag {
   background-color: #daa78c;
   background-image: url('../assets/img/flag.png');
@@ -142,39 +147,39 @@
   background-position: 4px 3px;
 }
 
-.cell.danger-1 {
+.cell.danger-1.opened {
   background-color: #5380e1b8;
 }
 
-.cell.danger-2 {
+.cell.danger-2.opened {
   background-color: #42b697b5;
 }
 
-.cell.danger-3 {
+.cell.danger-3.opened {
   background-color: #41c3449f;
 }
 
-.cell.danger-4 {
+.cell.danger-4.opened {
   background-color: #c9b929ce;
 }
 
-.cell.danger-5 {
+.cell.danger-5.opened {
   background-color: #df8b32cb;
 }
 
-.cell.danger-6 {
+.cell.danger-6.opened {
   background-color: #d932d6ac;
 }
 
-.cell.danger-7 {
+.cell.danger-7.opened {
   background-color: #c24479c5;
 }
 
-.cell.danger-8 {
+.cell.danger-8.opened {
   background-color: #ba1414cd;
 }
 
-.cell.mined {
+.cell.mined.opened {
   background-color: #bd5289cb;
   background-image: url('../assets/img/mine.png');
   background-repeat: no-repeat, repeat;
@@ -190,7 +195,8 @@
   background-position: 2px 2px;
 }
 
-.cell.empty {
+/* .cell.empty {
   background: #9c9ed4 radial-gradient(circle at 0 0, #9c9ed4cf, #9c9ed4cb);
   box-shadow: inset #444775d5 2px 2px 4px, inset #7c7fc0d5 -2px -2px 4px, #444775d5 -2px -2px 4px -2px;
-}
+} */
+

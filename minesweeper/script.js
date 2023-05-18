@@ -82,6 +82,8 @@ let dangerNumbers = [];
 let x = 0; // coordinate x in the game field
 let y = 0; // coordinate y in the game field
 let click = '2,2'; // example
+let openedCells = [];
+let dangerMap = new Map();
 
 
 const init = () => {
@@ -182,10 +184,136 @@ const init = () => {
     numberOfMines = numberOfMines + 1;
     dangerCell.setAttribute('cell-number', numberOfMines);
     dangerCell.classList.add(`danger-${numberOfMines}`);
-    dangerCell.innerHTML = numberOfMines;
+    dangerMap.set(number, numberOfMines);
   });
 };
 init();
+
+
+// CLICKS ON THE FIELD
+
+function handleClick(e) {
+  e.target.classList.add('opened');
+  let cellValue = e.target.attributes['cell-coords'].value;
+  if (dangerMap.has(cellValue)) {
+    e.target.innerHTML = dangerMap.get(cellValue);
+  }
+  openedCells.push(cellValue);
+
+  let cells = document.querySelectorAll('.cell');
+
+  if (e.target.classList.contains('cell')) {
+    let openedCellCoords = e.target.attributes['cell-coords'].value;
+    
+    let targetCellX = Number(openedCellCoords[0]);
+    let targetCellY = Number(openedCellCoords[2]);
+    
+    function findEmptyCells(targetCellX, targetCellY) {
+      cells.forEach(cell => {
+        let x = Number(cell.attributes['cell-coords'].value[0]);
+        let y = Number(cell.attributes['cell-coords'].value[2]);
+
+        if (x === targetCellX + 1 && y === targetCellY) {
+          if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
+            cell.classList.add('opened');
+            openedCells.push(`${x},${y}`);
+            findEmptyCells(x, y);
+          } else if (dangerNumbers.includes(`${x},${y}`)) {
+            cell.classList.add('opened');
+            openedCells.push(`${x},${y}`);
+            cell.innerHTML = dangerMap.get(`${x},${y}`);
+          }
+        }
+        if (x === targetCellX + 1 && y === targetCellY + 1) {
+          if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
+            cell.classList.add('opened');
+            openedCells.push(`${x},${y}`);
+            findEmptyCells(x, y);
+          } else if (dangerNumbers.includes(`${x},${y}`)) {
+            cell.classList.add('opened');
+            openedCells.push(`${x},${y}`);
+            cell.innerHTML = dangerMap.get(`${x},${y}`);
+          }
+        }
+        if (x === targetCellX && y === targetCellY + 1) {
+          if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
+            cell.classList.add('opened');
+            openedCells.push(`${x},${y}`);
+            findEmptyCells(x, y);
+          } else if (dangerNumbers.includes(`${x},${y}`)) {
+            cell.classList.add('opened');
+            openedCells.push(`${x},${y}`);
+            cell.innerHTML = dangerMap.get(`${x},${y}`);
+          }
+        }
+        if (x === targetCellX - 1 && y === targetCellY + 1) {
+          if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
+            cell.classList.add('opened');
+            openedCells.push(`${x},${y}`);
+            findEmptyCells(x, y);
+          } else if (dangerNumbers.includes(`${x},${y}`)) {
+            cell.classList.add('opened');
+            openedCells.push(`${x},${y}`);
+            cell.innerHTML = dangerMap.get(`${x},${y}`);
+          }
+        }
+        if (x === targetCellX - 1 && y === targetCellY) {
+          if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
+            cell.classList.add('opened');
+            openedCells.push(`${x},${y}`);
+            findEmptyCells(x, y);
+          } else if (dangerNumbers.includes(`${x},${y}`)) {
+            cell.classList.add('opened');
+            openedCells.push(`${x},${y}`);
+            cell.innerHTML = dangerMap.get(`${x},${y}`);
+          }
+        }
+        if (x === targetCellX - 1 && y === targetCellY - 1) {
+          if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
+            cell.classList.add('opened');
+            openedCells.push(`${x},${y}`);
+            findEmptyCells(x, y);
+          } else if (dangerNumbers.includes(`${x},${y}`)) {
+            cell.classList.add('opened');
+            openedCells.push(`${x},${y}`);
+            cell.innerHTML = dangerMap.get(`${x},${y}`);
+          }
+        }
+        if (x === targetCellX && y === targetCellY - 1) {
+          if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
+            cell.classList.add('opened');
+            openedCells.push(`${x},${y}`);
+            findEmptyCells(x, y);
+          } else if (dangerNumbers.includes(`${x},${y}`)) {
+            cell.classList.add('opened');
+            openedCells.push(`${x},${y}`);
+            cell.innerHTML = dangerMap.get(`${x},${y}`);
+          }
+        }
+        if (x === targetCellX + 1 && y === targetCellY - 1) {
+          if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
+            cell.classList.add('opened');
+            openedCells.push(`${x},${y}`);
+            findEmptyCells(x, y);
+          } else if (dangerNumbers.includes(`${x},${y}`)) {
+            cell.classList.add('opened');
+            openedCells.push(`${x},${y}`);
+            cell.innerHTML = dangerMap.get(`${x},${y}`);
+          }
+        }
+      });
+    }
+
+    if (!mines.includes(openedCellCoords) && !dangerNumbers.includes(openedCellCoords)) {
+      findEmptyCells(targetCellX, targetCellY);
+    } else if (mines.includes(openedCellCoords)) {
+      console.log('The game is failed');
+    } else if (dangerNumbers.includes(openedCellCoords)) {
+      console.log('Nothing to do, it is a dangerous cell');
+    }
+  }
+}
+gameField.addEventListener('click', handleClick);
 
 
 // TIMER 
