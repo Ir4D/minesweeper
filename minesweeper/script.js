@@ -199,6 +199,31 @@ const init = () => {
 init();
 
 
+// STOP THE GAME
+
+function setModalWindow(text) {
+  let modalWindow = document.createElement('div');
+  modalWindow.classList.add('modal');
+  let modalCloseBtn = document.createElement('span');
+  modalCloseBtn.classList.add('close');
+  modalWindow.appendChild(modalCloseBtn);
+  let modalText = document.createElement('div');
+  modalText.classList.add('modal-text');
+  modalWindow.appendChild(modalText);
+  modalText.innerHTML = text;
+  gameModal.appendChild(modalWindow);
+}
+
+function stopGame() {
+  gameField.addEventListener('click', handler, true);
+  function handler(e) {
+    e.stopPropagation();
+    e.preventDefault();
+  }
+  clearInterval(timeCount);
+}
+
+
 // CLICKS COUNTER
 
 function addClicks() {
@@ -353,8 +378,9 @@ function handleClick(e) {
     if (!mines.includes(openedCellCoords) && !dangerNumbers.includes(openedCellCoords)) {
       findEmptyCells(targetCellX, targetCellY);
     } else if (mines.includes(openedCellCoords)) {
+      let gameResultText = `GAME OVER <br> Game time: ${timerNumber.innerText}`;
       gameModal.innerHTML = '';
-      setModalWindow();
+      setModalWindow(gameResultText);
       const modal = document.querySelector('.modal')
       const closeBtn = document.querySelector('.close')
       modal.style.display = 'block';
@@ -387,6 +413,7 @@ cells.forEach(cell => {
         flaggedCells.delete(e.target.attributes['cell-coords'].value);
         updateFlagsAmount();
       }
+      setWin();
     }
   }
 });
@@ -427,28 +454,38 @@ function countTime() {
 countTime();
 
 
-// FAILED GAME
+// WIN
 
-function setModalWindow() {
-  let modalWindow = document.createElement('div');
-  modalWindow.classList.add('modal');
-  let modalCloseBtn = document.createElement('span');
-  modalCloseBtn.classList.add('close');
-  modalWindow.appendChild(modalCloseBtn);
-  let modalText = document.createElement('div');
-  modalText.classList.add('modal-text');
-  modalWindow.appendChild(modalText);
-  modalText.innerHTML = `GAME OVER <br> Game time: ${timerNumber.innerText}`;
-  gameModal.appendChild(modalWindow);
-}
-
-
-function stopGame() {
-  gameField.addEventListener('click', handler, true);
-  function handler(e) {
-    e.stopPropagation();
-    e.preventDefault();
+function isWinGame(mines, b) {
+  let a = new Set(mines);
+  const isEqual = (a, b) => {
+    if (a.size !== b.size) {
+      return false;
+    }
+    a.forEach((item) => {
+      if (!b.has(item)) {
+        return false;
+      }
+    });
+    return true;
   }
-  clearInterval(timeCount);
+  let equal = isEqual(a, b);
+  return equal;
+};
+
+function setWin(e) {
+  if (isWinGame(mines, flaggedCells)) {
+    let gameResultText = `YOU WIN! <br> Game time: ${timerNumber.innerText} <br> Clicks: ${clicksNumber.innerText}`;
+    gameModal.innerHTML = '';
+    setModalWindow(gameResultText);
+    const modal = document.querySelector('.modal')
+    const closeBtn = document.querySelector('.close')
+    modal.style.display = 'block';
+    closeBtn.addEventListener('click', () => {
+      modal.style.display = 'none';
+    })
+    stopGame();
+  }
 }
+gameField.addEventListener('click', setWin);
 
