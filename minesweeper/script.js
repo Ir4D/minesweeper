@@ -84,6 +84,8 @@ let y = 0; // coordinate y in the game field
 let click = '2,2'; // example
 let openedCells = [];
 let dangerMap = new Map();
+let clicksCount = 0;
+clicksNumber.innerHTML = clicksCount;
 
 
 const init = () => {
@@ -190,9 +192,20 @@ const init = () => {
 init();
 
 
+// CLICKS COUNTER
+
+function addClicks() {
+  clicksNumber.innerHTML = clicksCount;
+}
+
+
 // CLICKS ON THE FIELD
 
 function handleClick(e) {
+  if (!e.target.classList.contains('opened')) {
+    clicksCount++;
+    addClicks();
+  }
   e.target.classList.add('opened');
   let cellValue = e.target.attributes['cell-coords'].value;
   if (dangerMap.has(cellValue)) {
