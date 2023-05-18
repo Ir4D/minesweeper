@@ -85,7 +85,10 @@ let click = '2,2'; // example
 let openedCells = [];
 let dangerMap = new Map();
 let clicksCount = 0;
+let flagsAmount = minesAmount;
+let flaggedCells = new Set();
 clicksNumber.innerHTML = clicksCount;
+flagsNumber.innerHTML = flagsAmount;
 
 
 const init = () => {
@@ -202,36 +205,48 @@ function addClicks() {
 // CLICKS ON THE FIELD
 
 function handleClick(e) {
+  if (e.target.classList.contains('flag')) {
+    return;
+  }
   if (!e.target.classList.contains('opened')) {
     clicksCount++;
     addClicks();
   }
   e.target.classList.add('opened');
   let cellValue = e.target.attributes['cell-coords'].value;
+
   if (dangerMap.has(cellValue)) {
     e.target.innerHTML = dangerMap.get(cellValue);
   }
   openedCells.push(cellValue);
-
   let cells = document.querySelectorAll('.cell');
 
   if (e.target.classList.contains('cell')) {
     let openedCellCoords = e.target.attributes['cell-coords'].value;
-    
     let targetCellX = Number(openedCellCoords[0]);
     let targetCellY = Number(openedCellCoords[2]);
-    
+
     function findEmptyCells(targetCellX, targetCellY) {
       cells.forEach(cell => {
         let x = Number(cell.attributes['cell-coords'].value[0]);
         let y = Number(cell.attributes['cell-coords'].value[2]);
 
+        function checkFlag() {
+          if (cell.classList.contains('flag')) {
+            cell.classList.toggle('flag');
+            flaggedCells.delete(cell.attributes['cell-coords'].value);
+            updateFlagsAmount();
+          } 
+        }
+
         if (x === targetCellX + 1 && y === targetCellY) {
           if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
+            checkFlag();
             cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             findEmptyCells(x, y);
           } else if (dangerNumbers.includes(`${x},${y}`)) {
+            checkFlag();
             cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             cell.innerHTML = dangerMap.get(`${x},${y}`);
@@ -239,10 +254,12 @@ function handleClick(e) {
         }
         if (x === targetCellX + 1 && y === targetCellY + 1) {
           if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
+            checkFlag();
             cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             findEmptyCells(x, y);
           } else if (dangerNumbers.includes(`${x},${y}`)) {
+            checkFlag();
             cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             cell.innerHTML = dangerMap.get(`${x},${y}`);
@@ -250,10 +267,12 @@ function handleClick(e) {
         }
         if (x === targetCellX && y === targetCellY + 1) {
           if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
+            checkFlag();
             cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             findEmptyCells(x, y);
           } else if (dangerNumbers.includes(`${x},${y}`)) {
+            checkFlag();
             cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             cell.innerHTML = dangerMap.get(`${x},${y}`);
@@ -261,10 +280,12 @@ function handleClick(e) {
         }
         if (x === targetCellX - 1 && y === targetCellY + 1) {
           if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
+            checkFlag();
             cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             findEmptyCells(x, y);
           } else if (dangerNumbers.includes(`${x},${y}`)) {
+            checkFlag();
             cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             cell.innerHTML = dangerMap.get(`${x},${y}`);
@@ -272,10 +293,12 @@ function handleClick(e) {
         }
         if (x === targetCellX - 1 && y === targetCellY) {
           if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
+            checkFlag();
             cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             findEmptyCells(x, y);
           } else if (dangerNumbers.includes(`${x},${y}`)) {
+            checkFlag();
             cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             cell.innerHTML = dangerMap.get(`${x},${y}`);
@@ -283,10 +306,12 @@ function handleClick(e) {
         }
         if (x === targetCellX - 1 && y === targetCellY - 1) {
           if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
+            checkFlag();
             cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             findEmptyCells(x, y);
           } else if (dangerNumbers.includes(`${x},${y}`)) {
+            checkFlag();
             cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             cell.innerHTML = dangerMap.get(`${x},${y}`);
@@ -294,10 +319,12 @@ function handleClick(e) {
         }
         if (x === targetCellX && y === targetCellY - 1) {
           if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
+            checkFlag();
             cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             findEmptyCells(x, y);
           } else if (dangerNumbers.includes(`${x},${y}`)) {
+            checkFlag();
             cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             cell.innerHTML = dangerMap.get(`${x},${y}`);
@@ -305,10 +332,12 @@ function handleClick(e) {
         }
         if (x === targetCellX + 1 && y === targetCellY - 1) {
           if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
+            checkFlag();
             cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             findEmptyCells(x, y);
           } else if (dangerNumbers.includes(`${x},${y}`)) {
+            checkFlag();
             cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             cell.innerHTML = dangerMap.get(`${x},${y}`);
@@ -327,6 +356,30 @@ function handleClick(e) {
   }
 }
 gameField.addEventListener('click', handleClick);
+
+
+// FLAGS
+
+function updateFlagsAmount() {
+  flagsNumber.innerHTML = flagsAmount - flaggedCells.size;
+}
+
+let cells = document.querySelectorAll('.cell');
+cells.forEach(cell => {
+  cell.oncontextmenu = (e) => {
+    e.preventDefault();
+    if (!e.target.classList.contains('opened')) {
+      e.target.classList.toggle('flag');
+      if (e.target.classList.contains('flag')) {
+        flaggedCells.add(e.target.attributes['cell-coords'].value);
+        updateFlagsAmount();
+      } else {
+        flaggedCells.delete(e.target.attributes['cell-coords'].value);
+        updateFlagsAmount();
+      }
+    }
+  }
+});
 
 
 // TIMER 

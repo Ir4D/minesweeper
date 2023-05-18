@@ -145,6 +145,13 @@
   background-repeat: no-repeat, repeat;
   background-size: 18px 18px;
   background-position: 4px 3px;
+  cursor: auto;
+}
+
+.cell.flag:active {
+  cursor: auto;
+  background-color: #daa78c;
+  box-shadow: inset #0000005c -3px -3px 8px, inset #dfdfdf3a 2px 2px 4px, #0000005c 3px 3px 8px -3px;
 }
 
 .cell.danger-1.opened {
