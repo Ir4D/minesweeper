@@ -75,8 +75,6 @@ h1.innerHTML = 'Minesweeper';
 newGame.innerHTML = 'New game';
 timerNumber.innerHTML = '00:00:00';
 
-// VARIABLES
-
 let size = 10;
 let minesAmount = 10;
 let field = Math.pow(size, 2);
@@ -91,24 +89,28 @@ let clicksCount = 0;
 let flagsAmount = minesAmount;
 let flaggedCells = new Set();
 let timeCount;
+let firstClick;
+let firstMove = true;
+let second = 00,
+    minute = 00,
+    hour = 00;
 clicksNumber.innerHTML = clicksCount;
 flagsNumber.innerHTML = flagsAmount;
 
 
-const init = () => {
-  // CREATE GAME FIELD
-  function initField() {
-    for (let i = 0; i < 100; i += 1) {
-      const cell = document.createElement('div');
-      cell.className = 'cell';
-      gameField.appendChild(cell);
-    }
+// CREATE GAME FIELD
+
+function initField() {
+  for (let i = 0; i < field; i += 1) {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    gameField.appendChild(cell);
   }
-  initField();
 
   let cells = document.querySelectorAll('.cell');
+  let x = 0;
+  let y = 0;
 
-  // SET COORDINATES TO CELLS
   cells.forEach((elem) => {
     elem.setAttribute('cell-coords', `${x},${y}`);
     x++;
@@ -116,32 +118,44 @@ const init = () => {
       x = 0;
       y++;
     }
-  });
 
-  // SET MINES
-  function setMines() {
-    function getRandomSet(min, max, n) {
-      let res = new Set();
-      while (res.size < n) {
-        let random = Math.floor(Math.random() * (max - min + 1)) + min;
-        res.add(random);
-      }
-      return res;
+  });
+}
+initField();
+
+
+// SET MINES
+
+function setMines(firstClick) {
+  if (firstClick) {
+    cells.forEach(cell => {
+      cell.className = 'cell';
+      cell.removeAttribute('cell-number');
+    });
+    mines = [];
+    dangerNumbers = [];
+  } 
+
+  function getRandomSet(min, max, n) {
+    let res = new Set();
+    while (res.size < n) {
+      let random = Math.floor(Math.random() * (max - min + 1)) + min;
+      res.add(random);
     }
-    let mySet = getRandomSet(0, field - 1, minesAmount);
-    for (const item of mySet) {
-      if (item < 10) {
-        mines.push('0' + ',' + String(item).split('').join(','));
-      } else {
-        mines.push(String(item).split('').join(','));
-      }
-    }
-    if (mines.includes(click)) {
-      mines = [];
-      setMines();
+    return res;
+  }
+  let mySet = getRandomSet(0, field - 1, minesAmount);
+  for (const item of mySet) {
+    if (item < 10) {
+      mines.push('0' + ',' + String(item).split('').join(','));
+    } else {
+      mines.push(String(item).split('').join(','));
     }
   }
-  setMines();
+  
+  if (mines.includes(firstClick)) {
+    setMines(firstClick);
+  }
 
   mines.forEach(mine => {
     let coords = mine.split(',');
@@ -149,8 +163,15 @@ const init = () => {
       minedCell.classList.add('mined');
     }
   )
+  console.log(mines);
+}
 
-  // ADD NUMBERS TO CELLS AROUND MINES
+
+// INIT
+
+function init(firstClick) {
+  setMines(firstClick);
+
   function setDangerNumbers() {
     mines.forEach(item => {
       let x = Number(item[0]);
@@ -180,6 +201,7 @@ const init = () => {
         dangerNumbers.push(`${x+1},${y+1}`);
       }
     });
+    console.log(dangerNumbers);
   }
   setDangerNumbers();
 
@@ -192,14 +214,45 @@ const init = () => {
     }
     numberOfMines = numberOfMines + 1;
     dangerCell.setAttribute('cell-number', numberOfMines);
+    dangerCell.classList.add('danger');
     dangerCell.classList.add(`danger-${numberOfMines}`);
     dangerMap.set(number, numberOfMines);
-  });
+  })
 };
-init();
 
 
-// STOP THE GAME
+// TIMER
+
+function timer() {
+  second++;
+  if (second === 60) {
+    minute++;
+    second = 0;
+  }
+  if (minute === 60) {
+    hour++;
+    minute = 0;
+  }
+  const time = [hour, minute, second].map(function (element) {
+    if (element < 10) {
+      return '0' + element;
+    } else {
+      return element;
+    }
+  })
+  timerNumber.innerHTML = time.join(':');
+}
+
+function countTime() {
+  timeCount = setInterval(
+    timer,
+    1000
+  )
+}
+countTime();
+
+
+// MODAL WINDOW
 
 function setModalWindow(text) {
   let modalWindow = document.createElement('div');
@@ -214,26 +267,21 @@ function setModalWindow(text) {
   gameModal.appendChild(modalWindow);
 }
 
-function stopGame() {
-  gameField.addEventListener('click', handler, true);
-  function handler(e) {
-    e.stopPropagation();
-    e.preventDefault();
-  }
-  clearInterval(timeCount);
-}
-
-
-// CLICKS COUNTER
-
 function addClicks() {
   clicksNumber.innerHTML = clicksCount;
 }
 
 
-// CLICKS ON THE FIELD
+// CLICK ACTIONS
 
 function handleClick(e) {
+  let cells = document.querySelectorAll('.cell');
+  if (firstMove) {
+    firstClick = e.target.attributes['cell-coords'].value;
+    init(firstClick);
+  }
+  let cellValue = e.target.attributes['cell-coords'].value;
+  
   if (e.target.classList.contains('flag')) {
     return;
   }
@@ -242,24 +290,20 @@ function handleClick(e) {
     addClicks();
   }
   e.target.classList.add('opened');
-  let cellValue = e.target.attributes['cell-coords'].value;
-
+  firstMove = false;
   if (dangerMap.has(cellValue)) {
     e.target.innerHTML = dangerMap.get(cellValue);
   }
   openedCells.push(cellValue);
-  let cells = document.querySelectorAll('.cell');
-
   if (e.target.classList.contains('cell')) {
     let openedCellCoords = e.target.attributes['cell-coords'].value;
     let targetCellX = Number(openedCellCoords[0]);
     let targetCellY = Number(openedCellCoords[2]);
-
+    
     function findEmptyCells(targetCellX, targetCellY) {
       cells.forEach(cell => {
         let x = Number(cell.attributes['cell-coords'].value[0]);
         let y = Number(cell.attributes['cell-coords'].value[2]);
-
         function checkFlag() {
           if (cell.classList.contains('flag')) {
             cell.classList.toggle('flag');
@@ -267,7 +311,6 @@ function handleClick(e) {
             updateFlagsAmount();
           } 
         }
-
         if (x === targetCellX + 1 && y === targetCellY) {
           if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
             checkFlag();
@@ -275,10 +318,10 @@ function handleClick(e) {
             openedCells.push(`${x},${y}`);
             findEmptyCells(x, y);
           } else if (dangerNumbers.includes(`${x},${y}`)) {
-            checkFlag();
             cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             cell.innerHTML = dangerMap.get(`${x},${y}`);
+            checkFlag();
           }
         }
         if (x === targetCellX + 1 && y === targetCellY + 1) {
@@ -374,7 +417,6 @@ function handleClick(e) {
         }
       });
     }
-
     if (!mines.includes(openedCellCoords) && !dangerNumbers.includes(openedCellCoords)) {
       findEmptyCells(targetCellX, targetCellY);
     } else if (mines.includes(openedCellCoords)) {
@@ -388,17 +430,25 @@ function handleClick(e) {
         modal.style.display = 'none';
       })
       stopGame();
-    }
+    } 
   }
 }
 gameField.addEventListener('click', handleClick);
 
 
-// FLAGS
+// STOP GAME
 
-function updateFlagsAmount() {
-  flagsNumber.innerHTML = flagsAmount - flaggedCells.size;
+function stopGame() {
+  gameField.addEventListener('click', handler, true);
+  function handler(e) {
+    e.stopPropagation();
+    e.preventDefault();
+  }
+  clearInterval(timeCount);
 }
+
+
+// FLAGS
 
 let cells = document.querySelectorAll('.cell');
 cells.forEach(cell => {
@@ -418,63 +468,35 @@ cells.forEach(cell => {
   }
 });
 
-
-// TIMER 
-
-let second = 00,
-  minute = 00,
-  hour = 00;
-
-function timer() {
-  second++;
-  if (second === 60) {
-    minute++;
-    second = 0;
-  }
-  if (minute === 60) {
-    hour++;
-    minute = 0;
-  }
-  const time = [hour, minute, second].map(function (element) {
-    if (element < 10) {
-      return '0' + element;
-    } else {
-      return element;
-    }
-  })
-  timerNumber.innerHTML = time.join(':');
+function updateFlagsAmount() {
+  flagsNumber.innerHTML = flagsAmount - flaggedCells.size;
 }
 
-function countTime() {
-  timeCount = setInterval(
-    timer,
-    1000
-  )
-}
-countTime();
 
+// WIN GAME
 
-// WIN
-
-function isWinGame(mines, b) {
-  let a = new Set(mines);
+function isWinGame(mines, flaggedCells) {
+  let b = Array.from(flaggedCells).sort( (a, b) => a.localeCompare(b) );
+  let a = mines.sort( (a, b) => a.localeCompare(b) );
   const isEqual = (a, b) => {
-    if (a.size !== b.size) {
+    if (a.length === b.length && a.every((value, index) => value === b[index])) {
+      return true;
+    }
+    else {
       return false;
     }
-    a.forEach((item) => {
-      if (!b.has(item)) {
-        return false;
-      }
-    });
-    return true;
   }
   let equal = isEqual(a, b);
+  console.log('equal:', equal);
+  console.log(a);
+  console.log(b);
   return equal;
 };
 
 function setWin(e) {
   if (isWinGame(mines, flaggedCells)) {
+    console.log(mines);
+    console.log(flaggedCells);
     let gameResultText = `YOU WIN! <br> Game time: ${timerNumber.innerText} <br> Clicks: ${clicksNumber.innerText}`;
     gameModal.innerHTML = '';
     setModalWindow(gameResultText);
@@ -488,4 +510,3 @@ function setWin(e) {
   }
 }
 gameField.addEventListener('click', setWin);
-

@@ -120,7 +120,7 @@
   line-height: 25px;
   font-weight: 600;
   box-shadow: inset #0000005c -3px -3px 8px, inset #dfdfdf3a 2px 2px 4px, #0000005c 3px 3px 8px -3px;
-  transition: 0.4s;
+  transition: background-color 0.4s;
 }
 
 .cell:hover {
