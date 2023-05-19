@@ -17,6 +17,7 @@ const timerNumber = document.createElement('div');
 const infoFlags = document.createElement('div');
 const flagsIcon = document.createElement('div');
 const flagsNumber = document.createElement('div');
+const gameFieldContainer = document.createElement('div');
 const gameField = document.createElement('div');
 const gameModal = document.createElement('div');
 
@@ -39,6 +40,7 @@ timerNumber.className = 'timer__number';
 infoFlags.className = 'info__flags';
 flagsIcon.className = 'flags__icon';
 flagsNumber.className = 'flags__number';
+gameFieldContainer.className = 'game__field-container';
 gameField.className = 'game__field';
 gameModal.className = 'game-modal';
 
@@ -68,7 +70,8 @@ infoFlags.classList.add('flags');
 infoFlags.appendChild(flagsIcon);
 flagsIcon.classList.add('icon');
 infoFlags.appendChild(flagsNumber);
-game.appendChild(gameField);
+game.appendChild(gameFieldContainer);
+gameFieldContainer.appendChild(gameField);
 gameField.classList.add('field');
 
 h1.innerHTML = 'Minesweeper';
@@ -82,7 +85,6 @@ let mines = [];
 let dangerNumbers = [];
 let x = 0; // coordinate x in the game field
 let y = 0; // coordinate y in the game field
-let click = '2,2'; // example
 let openedCells = [];
 let dangerMap = new Map();
 let clicksCount = 0;
@@ -94,6 +96,7 @@ let firstMove = true;
 let second = 00,
     minute = 00,
     hour = 00;
+let gameEnd = false;
 clicksNumber.innerHTML = clicksCount;
 flagsNumber.innerHTML = flagsAmount;
 
@@ -163,7 +166,6 @@ function setMines(firstClick) {
       minedCell.classList.add('mined');
     }
   )
-  console.log(mines);
 }
 
 
@@ -201,7 +203,6 @@ function init(firstClick) {
         dangerNumbers.push(`${x+1},${y+1}`);
       }
     });
-    console.log(dangerNumbers);
   }
   setDangerNumbers();
 
@@ -318,10 +319,10 @@ function handleClick(e) {
             openedCells.push(`${x},${y}`);
             findEmptyCells(x, y);
           } else if (dangerNumbers.includes(`${x},${y}`)) {
+            checkFlag();
             cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             cell.innerHTML = dangerMap.get(`${x},${y}`);
-            checkFlag();
           }
         }
         if (x === targetCellX + 1 && y === targetCellY + 1) {
@@ -429,8 +430,15 @@ function handleClick(e) {
       closeBtn.addEventListener('click', () => {
         modal.style.display = 'none';
       })
+      gameEnd = true;
       stopGame();
-    } 
+    }
+    cells.forEach(cell => {
+      if (cell.classList.contains('opened')) {
+        flaggedCells.delete(cell.attributes['cell-coords'].value);
+        updateFlagsAmount();
+      }
+    });
   }
 }
 gameField.addEventListener('click', handleClick);
@@ -439,10 +447,10 @@ gameField.addEventListener('click', handleClick);
 // STOP GAME
 
 function stopGame() {
-  gameField.addEventListener('click', handler, true);
-  function handler(e) {
-    e.stopPropagation();
-    e.preventDefault();
+  if (gameEnd) {
+    gameField.removeEventListener('click', handleClick);
+    gameField.removeEventListener('contextmenu', setFlag);
+    gameField.removeEventListener('click', setWin);
   }
   clearInterval(timeCount);
 }
@@ -451,25 +459,32 @@ function stopGame() {
 // FLAGS
 
 let cells = document.querySelectorAll('.cell');
-cells.forEach(cell => {
-  cell.oncontextmenu = (e) => {
-    e.preventDefault();
-    if (!e.target.classList.contains('opened')) {
-      e.target.classList.toggle('flag');
-      if (e.target.classList.contains('flag')) {
-        flaggedCells.add(e.target.attributes['cell-coords'].value);
-        updateFlagsAmount();
-      } else {
-        flaggedCells.delete(e.target.attributes['cell-coords'].value);
-        updateFlagsAmount();
-      }
-      setWin();
+
+function setFlag(e) {
+  e.preventDefault();
+  if (!e.target.classList.contains('opened')) {
+    e.target.classList.toggle('flag');
+    if (e.target.classList.contains('flag')) {
+      flaggedCells.add(e.target.attributes['cell-coords'].value);
+      updateFlagsAmount();
+    } else {
+      flaggedCells.delete(e.target.attributes['cell-coords'].value);
+      updateFlagsAmount();
     }
+    setWin();
   }
-});
+}
+gameField.addEventListener('contextmenu', setFlag);
 
 function updateFlagsAmount() {
   flagsNumber.innerHTML = flagsAmount - flaggedCells.size;
+  cells.forEach(cell => {
+    if (flaggedCells.has(cell.attributes['cell-coords'].value)) {
+      cell.classList.add('flag');
+    } else {
+      cell.classList.remove('flag');
+    }
+  });
 }
 
 
@@ -487,16 +502,11 @@ function isWinGame(mines, flaggedCells) {
     }
   }
   let equal = isEqual(a, b);
-  console.log('equal:', equal);
-  console.log(a);
-  console.log(b);
   return equal;
 };
 
 function setWin(e) {
   if (isWinGame(mines, flaggedCells)) {
-    console.log(mines);
-    console.log(flaggedCells);
     let gameResultText = `YOU WIN! <br> Game time: ${timerNumber.innerText} <br> Clicks: ${clicksNumber.innerText}`;
     gameModal.innerHTML = '';
     setModalWindow(gameResultText);
@@ -506,7 +516,40 @@ function setWin(e) {
     closeBtn.addEventListener('click', () => {
       modal.style.display = 'none';
     })
+    gameEnd = true;
     stopGame();
   }
 }
 gameField.addEventListener('click', setWin);
+
+
+// START NEW GAME
+
+function startNewGame() {
+  firstClick = true;
+  firstMove = true;
+  second = 00;
+  minute = 00;
+  hour = 00;
+  clicksCount = 0;
+  timerNumber.innerHTML = '00:00:00';
+  flagsAmount = minesAmount;
+  flagsNumber.innerHTML = flagsAmount;
+  clicksCount = 0;
+  clicksNumber.innerHTML = clicksCount;
+  x = 0;
+  y = 0;
+  gameEnd = false;
+  mines = [];
+  dangerNumbers = [];
+  openedCells = [];
+  dangerMap.clear();
+  flaggedCells.clear();
+  gameField.innerHTML = '';
+  initField();
+  countTime();
+  gameField.addEventListener('click', handleClick);
+  gameField.addEventListener('contextmenu', setFlag);
+  gameField.addEventListener('click', setWin);
+}
+newGame.addEventListener('click', startNewGame);
