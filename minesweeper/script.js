@@ -79,7 +79,7 @@ newGame.innerHTML = 'New game';
 timerNumber.innerHTML = '00:00:00';
 
 let size = 10;
-let minesAmount = 2;
+let minesAmount = 10;
 let field = Math.pow(size, 2);
 let mines = [];
 let dangerNumbers = [];
@@ -421,7 +421,7 @@ function handleClick(e) {
     if (!mines.includes(openedCellCoords) && !dangerNumbers.includes(openedCellCoords)) {
       findEmptyCells(targetCellX, targetCellY);
     } else if (mines.includes(openedCellCoords)) {
-      let gameResultText = `GAME OVER <br> Game time: ${timerNumber.innerText}`;
+      let gameResultText = `Game over. <br>Try again`;
       gameModal.innerHTML = '';
       setModalWindow(gameResultText);
       const modal = document.querySelector('.modal')
@@ -528,7 +528,7 @@ function isWinGameNoFlags() {
 
 function setWin(e) {
   if (isWinGameFlags(mines, flaggedCells) || isWinGameNoFlags()) {
-    let gameResultText = `YOU WIN! <br> Game time: ${timerNumber.innerText} <br> Clicks: ${clicksNumber.innerText}`;
+    let gameResultText = `Hooray! You found all mines in ${timerNumber.innerText} seconds and ${clicksNumber.innerText} moves!`;
     gameModal.innerHTML = '';
     setModalWindow(gameResultText);
     const modal = document.querySelector('.modal')
