@@ -79,7 +79,7 @@ newGame.innerHTML = 'New game';
 timerNumber.innerHTML = '00:00:00';
 
 let size = 10;
-let minesAmount = 10;
+let minesAmount = 2;
 let field = Math.pow(size, 2);
 let mines = [];
 let dangerNumbers = [];
@@ -490,7 +490,7 @@ function updateFlagsAmount() {
 
 // WIN GAME
 
-function isWinGame(mines, flaggedCells) {
+function isWinGameFlags(mines, flaggedCells) {
   let b = Array.from(flaggedCells).sort( (a, b) => a.localeCompare(b) );
   let a = mines.sort( (a, b) => a.localeCompare(b) );
   const isEqual = (a, b) => {
@@ -505,8 +505,29 @@ function isWinGame(mines, flaggedCells) {
   return equal;
 };
 
+function isWinGameNoFlags() {
+  let closedCells = [];
+  cells.forEach(cell => {
+    if (!openedCells.includes(cell.attributes['cell-coords'].value)) {
+      closedCells.push(cell.attributes['cell-coords'].value);
+    }
+  });
+  let a = mines.sort( (a, b) => a.localeCompare(b) );
+  let b = closedCells.sort( (a, b) => a.localeCompare(b) );
+  const isEqual = (a, b) => {
+    if (a.length === b.length && a.every((value, index) => value === b[index])) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+  let equal = isEqual(a, b);
+  return equal;
+}
+
 function setWin(e) {
-  if (isWinGame(mines, flaggedCells)) {
+  if (isWinGameFlags(mines, flaggedCells) || isWinGameNoFlags()) {
     let gameResultText = `YOU WIN! <br> Game time: ${timerNumber.innerText} <br> Clicks: ${clicksNumber.innerText}`;
     gameModal.innerHTML = '';
     setModalWindow(gameResultText);
@@ -531,7 +552,6 @@ function startNewGame() {
   second = 00;
   minute = 00;
   hour = 00;
-  clicksCount = 0;
   timerNumber.innerHTML = '00:00:00';
   flagsAmount = minesAmount;
   flagsNumber.innerHTML = flagsAmount;
