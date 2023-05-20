@@ -12,6 +12,7 @@ const easy = document.createElement('div');
 const medium = document.createElement('div');
 const hard = document.createElement('div');
 const minesQuantity = document.createElement('div');
+const minesQuantitySlider = document.createElement('input');
 const game = document.createElement('div');
 const gameInfo = document.createElement('div');
 const infoClicks = document.createElement('div');
@@ -41,6 +42,7 @@ easy.className = 'difficulty__easy';
 medium.className = 'difficulty__medium';
 hard.className = 'difficulty__hard';
 minesQuantity.className = 'mines-quantity';
+minesQuantitySlider.className = 'mines-quantity__slider';
 game.className = 'game';
 gameInfo.className = 'game__info';
 infoClicks.className = 'info__clicks';
@@ -69,6 +71,7 @@ difficulty.appendChild(easy);
 difficulty.appendChild(medium);
 difficulty.appendChild(hard);
 menu.appendChild(minesQuantity);
+minesQuantity.appendChild(minesQuantitySlider);
 container.appendChild(gameModal);
 container.appendChild(game);
 game.appendChild(gameInfo);
@@ -100,7 +103,10 @@ easy.innerHTML = 'Easy';
 medium.innerHTML = 'Medium';
 hard.innerHTML = 'Hard';
 theme.innerHTML = 'Theme';
-minesQuantity.innerHTML = 'Mines quantity';
+minesQuantitySlider.type = 'range';
+minesQuantitySlider.min = '10';
+minesQuantitySlider.max = '99';
+minesQuantitySlider.value = '10';
 
 let size = 10;
 let minesAmount = 10;
@@ -153,7 +159,16 @@ let countTime = setInterval(timer, 1000);
 
 
 /* ************************ */
-/* CREATE GAME FIELD */
+/* MINES AMOUNT */
+/* ************************ */
+
+minesQuantitySlider.oninput = function() {
+  startNewGame();
+}
+
+
+/* ************************ */
+/* GAME FIELD */
 /* ************************ */
 
 function initField() {
@@ -201,19 +216,18 @@ function setMines(firstClick) {
   function getRandomSet(min, max, n) {
     let res = new Set();
     while (res.size < n) {
-      let random = Math.floor(Math.random() * (max - min + 1)) + min;
+      let x = Math.floor(Math.random() * (max - min + 1)) + min;
+      let y = Math.floor(Math.random() * (max - min + 1)) + min;
+      let random = String(x) + ',' + String(y);
       res.add(random);
     }
     return res;
   }
 
-  let setX = getRandomSet(0, size - 1, minesAmount);
-  let setY = getRandomSet(0, size - 1, minesAmount);
-  let arrSetX = Array.from(setX);
-  let arrSetY = Array.from(setY);
+  let mySet = getRandomSet(0, size - 1, minesAmount);
 
-  for (let i = 0; i < minesAmount; i++) {
-    mines.push(String(arrSetX[i]) + ',' + String(arrSetY[i]));
+  for (const item of mySet) {
+    mines.push(item);
   }
   
   if (mines.includes(firstClick)) {
@@ -626,6 +640,7 @@ gameField.addEventListener('click', setWin);
 /* ************************ */
 
 function startNewGame() {
+  minesAmount = minesQuantitySlider.value;
   firstClick = true;
   firstMove = true;
   second = 00;

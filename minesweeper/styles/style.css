@@ -189,7 +189,7 @@
 }
 
 .cell.opened {
-  background: #b1b3e1 radial-gradient(circle at 0 0, #ffffff37, #ffffff3b);
+  background: #6464a5 radial-gradient(circle at 0 0, #ffffff37, #ffffff3b);
   box-shadow: inset #616494d5 2px 2px 4px, inset #9598cbd5 -2px -2px 4px, #585b8bd5 -2px -2px 4px -2px;
 }
 
@@ -279,4 +279,38 @@
   margin-top: 60px;
   font-size: 28px;
   font-weight: 700;
+}
+
+.mines-quantity {
+  width: 70%;
+  margin: 0 auto;
+}
+
+.mines-quantity__slider {
+  width: 70%;
+  height: 8px;
+  background: #6061bd;
+  border-radius: 6px;
+  opacity: 0.8;
+  outline: none;
+  appearance: none;
+  transition: opacity 0.2s;
+}
+
+.mines-quantity__slider:hover {
+  cursor: pointer;
+  opacity: 1;
+  background: #9c9ed4;
+  box-shadow: 0 0 8px #6061bd;
+}
+
+.mines-quantity__slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ffffff;
+  cursor: pointer;
+  box-shadow: inset #0000005c -3px -3px 8px, inset #dfdfdf3a 2px 2px 4px, #0000005c 3px 3px 8px -3px, 0 0 10px #6061bd;
 }
