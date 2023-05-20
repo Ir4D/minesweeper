@@ -79,7 +79,7 @@ newGame.innerHTML = 'New game';
 timerNumber.innerHTML = '00:00:00';
 
 let size = 10;
-let minesAmount = 10;
+let minesAmount = 2;
 let field = Math.pow(size, 2);
 let mines = [];
 let dangerNumbers = [];
@@ -290,6 +290,7 @@ function handleClick(e) {
     clicksCount++;
     addClicks();
   }
+  playSound('../assets/audio/click.wav');
   e.target.classList.add('opened');
   firstMove = false;
   if (dangerMap.has(cellValue)) {
@@ -430,6 +431,7 @@ function handleClick(e) {
       closeBtn.addEventListener('click', () => {
         modal.style.display = 'none';
       })
+      playSound('../assets/audio/lose.wav');
       gameEnd = true;
       stopGame();
     }
@@ -463,6 +465,7 @@ let cells = document.querySelectorAll('.cell');
 function setFlag(e) {
   e.preventDefault();
   if (!e.target.classList.contains('opened')) {
+    playSound('../assets/audio/flag.wav');
     e.target.classList.toggle('flag');
     if (e.target.classList.contains('flag')) {
       flaggedCells.add(e.target.attributes['cell-coords'].value);
@@ -537,6 +540,7 @@ function setWin(e) {
     closeBtn.addEventListener('click', () => {
       modal.style.display = 'none';
     })
+    playSound('../assets/audio/win.wav');
     gameEnd = true;
     stopGame();
   }
@@ -573,3 +577,15 @@ function startNewGame() {
   gameField.addEventListener('click', setWin);
 }
 newGame.addEventListener('click', startNewGame);
+
+
+// SOUND EFFECTS
+
+let sound = new Audio();
+
+function playSound(src) {
+  sound.pause();
+  sound = new Audio(src);
+  sound.volume = 0.5;
+  sound.play();
+}
