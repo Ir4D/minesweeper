@@ -26,15 +26,19 @@
 }
 
 .menu {
-  display: flex;
-  justify-content: space-between;
   margin-bottom: 20px;
   color: #e8d3c8;
   letter-spacing: 0.9px;
 }
 
+.menu__wrapper {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
 .new-game {
-  width: 85px;
+  width: 90px;
   height: 34px;
   background-color: #43478f;
   border: 2px solid #272a57;
@@ -59,26 +63,42 @@
   box-shadow: inset #444775d5 2px 2px 4px, inset #7c7fc0d5 -2px -2px 4px, #444775d5 -2px -2px 4px -2px, 0 0 10px #6061bd;
 }
 
-.settings {
-  width: 30px;
-  height: 30px;
-  background-image: url('../assets/img/settings.png');
-  background-repeat: no-repeat, repeat;
-  background-size: 30px 30px;
-  transition: 0.7s;
-  padding: 10px;
-  border-radius: 50%;
-  background-color: #272a57;
+.difficulty {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.difficulty__easy,
+.difficulty__medium,
+.difficulty__hard {
+  width: 75px;
+  height: 25px;
+  background-color: #43478f;
+  border: 2px solid #272a57;
+  border-radius: 5px;
+  font-size: 14px;
+  text-align: center;
+  line-height: 22px;
+  transition: 0.4s;
+}
+
+.difficulty div:hover {
+  cursor: pointer;
+  background-color: #daa78cd0;
   box-shadow: 0 0 10px #6061bd;
 }
 
-.settings:hover{
+.difficulty div:active,
+.difficulty div.active {
   cursor: pointer;
-  transform: rotate(-45deg);
+  background-color: #9c9ed4;
+  color: #1a1b54;
+  box-shadow: 0 0 10px #6061bd;
 }
 
-.settings:hover > * {
-  transform: rotate(45deg);
+.mines-quantity {
+  text-align: center;
 }
 
 .info {
@@ -133,25 +153,25 @@
   border: 10px solid #1A1b54;
   margin-bottom: 20px;
   border-radius: 8px;
-  width: 270px;
+  width: 199px;
   margin: 0 auto;
 }
 
-.field {
+.game__field {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   margin: 0 auto;
 }
 
 .cell {
-  width: 25px;
-  height: 25px;
+  width: 18px;
+  height: 18px;
   font-size: 13px;
   background-color: #43478f;
   border-radius: 2px;
   border: 1px solid #1a1b54;
   text-align: center;
-  line-height: 25px;
+  line-height: 18px;
   font-weight: 600;
   box-shadow: inset #0000005c -3px -3px 8px, inset #dfdfdf3a 2px 2px 4px, #0000005c 3px 3px 8px -3px;
   transition: background-color 0.4s;
@@ -177,8 +197,8 @@
   background-color: #daa78c;
   background-image: url('../assets/img/flag.png');
   background-repeat: no-repeat, repeat;
-  background-size: 18px 18px;
-  background-position: 4px 3px;
+  background-size: 12px 12px;
+  background-position: 3px 2px;
   cursor: auto;
 }
 
@@ -221,19 +241,10 @@
 }
 
 .cell.mined.opened {
-  background-color: #bd5289cb;
+  background-color: #b30101c7;
   background-image: url('../assets/img/mine.png');
   background-repeat: no-repeat, repeat;
-  background-size: 20px 20px;
-  background-position: 2px 2px;
-}
-
-.cell.mine-failed {
-  background-color: #b30101;
-  background-image: url('../assets/img/mine.png');
-  background-repeat: no-repeat, repeat;
-  background-size: 20px 20px;
-  background-position: 2px 2px;
+  background-size: 16px 16px;
 }
 
 .modal {
@@ -242,6 +253,9 @@
   z-index: 1;
   width: 300px;
   height: 300px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   background-color: rgba(176, 168, 199, 0.904);
   border-radius: 6px;
 }
@@ -263,6 +277,6 @@
 .modal-text {
   text-align: center;
   margin-top: 60px;
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 700;
 }
