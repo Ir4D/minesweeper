@@ -27,6 +27,8 @@ const flagsNumber = document.createElement('div');
 const gameFieldContainer = document.createElement('div');
 const gameField = document.createElement('div');
 const gameModal = document.createElement('div');
+const score = document.createElement('div');
+const scoreModal = document.createElement('div');
 
 body.className = 'body';
 header.className = 'header';
@@ -35,6 +37,8 @@ main.className = 'main';
 container.className = 'container';
 menu.className = 'menu';
 newGame.className = 'new-game';
+score.className = 'score';
+scoreModal.className = 'score-modal';
 menuWrapper.className = 'menu__wrapper';
 mode.className = 'mode';
 difficulty.className = 'difficulty';
@@ -65,6 +69,7 @@ main.appendChild(container);
 container.appendChild(menu);
 menu.appendChild(menuWrapper);
 menuWrapper.appendChild(newGame);
+menuWrapper.appendChild(score);
 menuWrapper.appendChild(mode);
 menu.appendChild(difficulty);
 difficulty.appendChild(easy);
@@ -72,6 +77,7 @@ difficulty.appendChild(medium);
 difficulty.appendChild(hard);
 menu.appendChild(minesQuantity);
 minesQuantity.appendChild(minesQuantitySlider);
+container.appendChild(scoreModal);
 container.appendChild(gameModal);
 container.appendChild(game);
 game.appendChild(gameInfo);
@@ -98,6 +104,7 @@ easy.classList.add('active');
 
 h1.innerHTML = 'Minesweeper';
 newGame.innerHTML = 'New game';
+score.innerHTML = 'Score';
 timerNumber.innerHTML = '00:00:00';
 easy.innerHTML = 'Easy';
 medium.innerHTML = 'Medium';
@@ -126,6 +133,7 @@ let second = 00,
     minute = 00,
     hour = 00;
 let gameEnd = false;
+let lastTenResults = [];
 clicksNumber.innerHTML = clicksCount;
 flagsNumber.innerHTML = flagsAmount;
 
@@ -614,6 +622,7 @@ function isWinGameNoFlags() {
 
 function setWin(e) {
   if (isWinGameFlags(mines, flaggedCells) || isWinGameNoFlags()) {
+    setLastResults(timerNumber.innerText, minesAmount, clicksNumber.innerText)
     clearInterval(countTime);
     let gameResultText = `Hooray! <br>You found all mines <br>in ${timerNumber.innerText} seconds <br>and ${clicksNumber.innerText} moves!`;
     gameModal.innerHTML = '';
@@ -754,5 +763,62 @@ function changeMode() {
   infoFlags.classList.toggle('light-mode');
   gameFieldContainer.classList.toggle('light-mode');
   gameField.classList.toggle('light-mode');
+  score.classList.toggle('light-mode');
 }
 mode.addEventListener('click', changeMode);
+
+
+/* ************************ */
+/* RESULTS: LAST 10 WINS */
+/* ************************ */
+
+function setLastResults(timeResult, minesResult, clicksResult) {
+  let result = [];
+  result.push(timeResult, minesResult, clicksResult);
+  
+  if (lastTenResults.length === 10) {
+    lastTenResults.shift();
+  }
+  lastTenResults.push(result);
+}
+
+function setResultsWindow() {
+  let resultslWindow = document.createElement('div');
+  resultslWindow.className = 'results-modal';
+  let resultsCloseBtn = document.createElement('span');
+  resultsCloseBtn.className = 'closeResults';
+  resultslWindow.appendChild(resultsCloseBtn);
+  let resultsTitle = document.createElement('h3');
+  resultsTitle.className = 'results__title';
+  resultslWindow.appendChild(resultsTitle);
+  resultsTitle.innerHTML = 'Score:';
+  let resultsList = document.createElement('ol');
+  resultsList.className = 'results-list';
+  resultslWindow.appendChild(resultsList);
+
+  if (lastTenResults.length > 0) {
+    for (let i = 0; i < lastTenResults.length; i += 1) {
+      const resultsItem = document.createElement('li');
+      resultsItem.className = 'results-item';
+      resultsList.appendChild(resultsItem);
+      resultsItem.innerHTML = `time: ${lastTenResults[i][0]}, mines: ${lastTenResults[i][1]}, clicks: ${lastTenResults[i][2]}`;
+    }
+  } else {
+    resultsTitle.innerHTML = 'Score: <br><br> No games have been played yet :(';
+  }
+
+  scoreModal.appendChild(resultslWindow);
+}
+
+function showLastResults(e) {
+  scoreModal.innerHTML = '';
+  setResultsWindow();
+  const scoreWindow = document.querySelector('.results-modal')
+  const closeResultsBtn = document.querySelector('.closeResults')
+  scoreWindow.style.display = 'block';
+
+  closeResultsBtn.addEventListener('click', () => {
+    scoreWindow.style.display = 'none';
+  });
+}
+score.addEventListener('click', showLastResults);
