@@ -83,14 +83,20 @@
   transition: 0.4s;
 }
 
-.difficulty div:hover {
+.difficulty__easy:hover,
+.difficulty__medium:hover, 
+.difficulty__hard:hover {
   cursor: pointer;
   background-color: #daa78cd0;
   box-shadow: 0 0 10px #6061bd;
 }
 
-.difficulty div:active,
-.difficulty div.active {
+.difficulty__easy:active,
+.difficulty__medium:active, 
+.difficulty__hard:active, 
+.difficulty__easy.active,
+.difficulty__medium.active, 
+.difficulty__hard.active {
   cursor: pointer;
   background-color: #9c9ed4;
   color: #1a1b54;
@@ -150,10 +156,12 @@
 }
 
 .game__field-container {
-  border: 10px solid #1A1b54;
+  background-color: #1a1b54;
+  border: 2px solid #1a1b54;
+  box-shadow: 0 0 10px #5759b0;
   margin-bottom: 20px;
-  border-radius: 8px;
-  width: 199px;
+  border-radius: 4px;
+  width: 183px;
   margin: 0 auto;
 }
 
@@ -256,7 +264,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: rgba(176, 168, 199, 0.904);
+  background-color: #9a89c6e7;
   border-radius: 6px;
 }
 
@@ -294,7 +302,7 @@
   opacity: 0.8;
   outline: none;
   appearance: none;
-  transition: opacity 0.2s;
+  transition: opacity 0.3s;
 }
 
 .mines-quantity__slider:hover {
@@ -313,4 +321,198 @@
   background: #ffffff;
   cursor: pointer;
   box-shadow: inset #0000005c -3px -3px 8px, inset #dfdfdf3a 2px 2px 4px, #0000005c 3px 3px 8px -3px, 0 0 10px #6061bd;
+}
+
+.mode {
+  width: 35px;
+  height: 35px;
+  background-repeat: no-repeat, repeat;
+  background-size: 26px 26px;
+  background-position: 3px 3px;
+  background-image: url('../assets/img/mode-white.png');
+  border: 1px solid #272a57;
+  border-radius: 50%;
+  box-shadow: inset #0000005c -3px -3px 8px, inset #dfdfdf3a 2px 2px 4px, #0000005c 3px 3px 8px -3px, 0 0 10px #6061bd;
+  transition: 0.3s;
+}
+
+.mode:hover {
+  cursor: pointer;
+  background-color: #daa78cd0;
+  box-shadow: 0 0 8px #6061bd;
+}
+
+.mode:active {
+  cursor: pointer;
+  background-color: #9c9ed4;
+  box-shadow: inset #444775d5 2px 2px 4px, inset #7c7fc0d5 -2px -2px 4px, #444775d5 -2px -2px 4px -2px, 0 0 10px #6061bd;
+}
+
+.body.light-mode {
+  background-color: #d2c5dd;
+}
+
+.game-title.light-mode {
+  color: #1c1e3c;
+}
+
+.container.light-mode {
+  background-color: #c2abd3;
+  box-shadow: 0 0 10px #9b7dad;
+}
+
+.menu.light-mode {
+  color: #381865;
+}
+
+.new-game.light-mode {
+  background-color: #dcbeee;
+  border: 2px solid #7e4e9a;
+  box-shadow: inset #bcbcbc5c -3px -3px 8px, inset #dcdcdc3a 2px 2px 4px, #c8c8c85c 3px 3px 8px -3px, 0 0 10px #79548e;
+}
+
+.new-game.light-mode:hover {
+  background-color: #f8e2d6;
+  box-shadow: 0 0 10px #9b7dad;
+}
+
+.new-game.light-mode:active {
+  background-color: #f7dffd;
+  color: #581dac;
+  box-shadow: inset #d5b0e0d5 2px 2px 4px, inset #d0a4dfd5 -2px -2px 4px, #b183bfd5 -2px -2px 4px -2px, 0 0 10px #c294ce;
+}
+
+.difficulty__easy.light-mode,
+.difficulty__medium.light-mode,
+.difficulty__hard.light-mode {
+  background-color: #dcbeee;
+  border: 2px solid #7e4e9a;
+}
+
+.difficulty__easy.light-mode:hover,
+.difficulty__medium.light-mode:hover, 
+.difficulty__hard.light-mode:hover {
+  background-color: #f8e2d6;
+  box-shadow: 0 0 10px #9b7dad;
+}
+
+.difficulty__easy.light-mode:active,
+.difficulty__medium.light-mode:active, 
+.difficulty__hard.light-mode:active, 
+.difficulty__easy.active.light-mode,
+.difficulty__medium.active.light-mode, 
+.difficulty__hard.active.light-mode {
+  background-color: #f7dffd;
+  color: #581dac;
+  box-shadow: inset #d5b0e0d5 2px 2px 4px, inset #d0a4dfd5 -2px -2px 4px, #b183bfd5 -2px -2px 4px -2px, 0 0 10px #c294ce;
+}
+
+.info__clicks.light-mode,
+.info__timer.light-mode,
+.info__flags.light-mode {
+  background-color: #f6dfd2;
+  background: #f6dfd2 radial-gradient(circle at 0 0, #f6d1bdca, #d3b09dcc);
+  box-shadow: inset #9a6a9dde 2px 2px 4px, inset #987ca4dc -2px -2px 4px, #e3b9e7de -2px -2px 4px -2px;
+}
+
+.game__field-container.light-mode {
+  background-color: #7b508b;
+  border: 2px solid #7b508b;
+  box-shadow: 0 0 10px #9a74b1;
+}
+
+.game__field.light-mode .cell {
+  background-color: #794c92;
+  border: 1px solid #2b0a3f;
+}
+
+.game__field.light-mode .cell:hover {
+  background-color: #f6dfd2d0;
+}
+
+.game__field.light-mode .cell:active {
+  background-color: #f6dfd2;
+  box-shadow: inset #d5b0e0d5 2px 2px 4px, inset #d0a4dfd5 -2px -2px 4px, #b183bfd5 -2px -2px 4px -2px, 0 0 10px #c294ce;
+}
+
+.game__field.light-mode .cell.opened {
+  background: #dfc9bd radial-gradient(circle at 0 0, #ffffff37, #ffffff3b);
+  box-shadow: inset #d5b0e0d5 2px 2px 4px, inset #d0a4dfd5 -2px -2px 4px, #b183bfd5 -2px -2px 4px -2px, 0 0 10px #c294ce;
+}
+
+.game__field.light-mode .cell.flag {
+  background-color: #f3af8b;
+}
+
+.game__field.light-mode .cell.flag:active {
+  background-color: #f3af8b;
+}
+
+.game__field.light-mode .cell.danger-1.opened {
+  background-color: #5380e1b8;
+}
+
+.game__field.light-mode .cell.danger-2.opened {
+  background-color: #42b697b5;
+}
+
+.game__field.light-mode .cell.danger-3.opened {
+  background-color: #41c3449f;
+}
+
+.game__field.light-mode .cell.danger-4.opened {
+  background-color: #c9b929ce;
+}
+
+.game__field.light-mode .cell.danger-5.opened {
+  background-color: #df8b32cb;
+}
+
+.game__field.light-mode .cell.danger-6.opened {
+  background-color: #d932d6ac;
+}
+
+.game__field.light-mode .cell.danger-7.opened {
+  background-color: #c24479c5;
+}
+
+.game__field.light-mode .cell.danger-8.opened {
+  background-color: #ba1414cd;
+}
+
+.game__field.light-mode .cell.mined.opened {
+  background-color: #b30101c7;
+  background-image: url('../assets/img/mine.png');
+  background-repeat: no-repeat, repeat;
+  background-size: 16px 16px;
+}
+
+.mines-quantity__slider.light-mode {
+  background: #7e4e9a;
+}
+
+.mines-quantity__slider.light-mode:hover {
+  background: #976eae;
+  box-shadow: 0 0 8px #ce94d2;
+}
+
+.mines-quantity__slider.light-mode::-webkit-slider-thumb {
+  box-shadow: inset #0000005c -3px -3px 8px, inset #dfdfdf3a 2px 2px 4px, #0000005c 3px 3px 8px -3px, 0 0 10px #ce94d2;
+}
+
+.mode.light-mode {
+  border: 1px solid #794c92;
+  background-color: #976eae;
+  box-shadow: inset #0000005c -3px -3px 8px, inset #dfdfdf3a 2px 2px 4px, #0000005c 3px 3px 8px -3px, 0 0 10px #ce94d2;
+}
+
+.mode.light-mode:hover {
+  background-color: #daa78cd0;
+  box-shadow: 0 0 8px #ce94d2;
+}
+
+.mode.light-mode:active {
+  background-color: #794c92;
+  box-shadow: 0 0 8px #c294ce;
+  box-shadow: inset #d5b0e0d5 2px 2px 4px, inset #d0a4dfd5 -2px -2px 4px, #b183bfd5 -2px -2px 4px -2px, 0 0 10px #c294ce;
 }

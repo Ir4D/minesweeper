@@ -6,7 +6,7 @@ const container = document.createElement('div');
 const menu = document.createElement('div');
 const menuWrapper = document.createElement('div');
 const newGame = document.createElement('div');
-const theme = document.createElement('div');
+const mode = document.createElement('div');
 const difficulty = document.createElement('div');
 const easy = document.createElement('div');
 const medium = document.createElement('div');
@@ -36,7 +36,7 @@ container.className = 'container';
 menu.className = 'menu';
 newGame.className = 'new-game';
 menuWrapper.className = 'menu__wrapper';
-theme.className = 'theme';
+mode.className = 'mode';
 difficulty.className = 'difficulty';
 easy.className = 'difficulty__easy';
 medium.className = 'difficulty__medium';
@@ -65,7 +65,7 @@ main.appendChild(container);
 container.appendChild(menu);
 menu.appendChild(menuWrapper);
 menuWrapper.appendChild(newGame);
-menuWrapper.appendChild(theme);
+menuWrapper.appendChild(mode);
 menu.appendChild(difficulty);
 difficulty.appendChild(easy);
 difficulty.appendChild(medium);
@@ -102,7 +102,6 @@ timerNumber.innerHTML = '00:00:00';
 easy.innerHTML = 'Easy';
 medium.innerHTML = 'Medium';
 hard.innerHTML = 'Hard';
-theme.innerHTML = 'Theme';
 minesQuantitySlider.type = 'range';
 minesQuantitySlider.min = '10';
 minesQuantitySlider.max = '99';
@@ -693,7 +692,7 @@ function setEasyDifficulty(e) {
     size = 10;
     field = Math.pow(size, 2);
     container.style.width = '330px';
-    gameFieldContainer.style.width = '199px';
+    gameFieldContainer.style.width = '183px';
     gameFieldContainer.style.margin = '0 auto';
     gameField.style.gridTemplateColumns = 'repeat(10, 1fr)'
     startNewGame();
@@ -709,7 +708,7 @@ function setMediumDifficulty(e) {
     size = 15;
     field = Math.pow(size, 2);
     container.style.width = '330px';
-    gameFieldContainer.style.width = '281px';
+    gameFieldContainer.style.width = '274px';
     gameFieldContainer.style.margin = '0 auto';
     gameField.style.gridTemplateColumns = 'repeat(15, 1fr)'
     startNewGame();
@@ -724,11 +723,36 @@ function setHardDifficulty(e) {
     medium.classList.remove('active');
     size = 25;
     field = Math.pow(size, 2);
-    container.style.width = '480px';
-    gameFieldContainer.style.width = '460px';
+    container.style.width = '472px';
+    gameFieldContainer.style.width = '453px';
     gameFieldContainer.style.marginLeft = '-10px';
     gameField.style.gridTemplateColumns = 'repeat(25, 1fr)'
     startNewGame();
   }
 }
 hard.addEventListener('click', setHardDifficulty);
+
+
+/* ************************ */
+/* LIGHT MODE */
+/* ************************ */
+
+function changeMode() {
+  body.classList.toggle('light-mode');
+  header.classList.toggle('light-mode');
+  h1.classList.toggle('light-mode');
+  container.classList.toggle('light-mode');
+  menu.classList.toggle('light-mode');
+  newGame.classList.toggle('light-mode');
+  mode.classList.toggle('light-mode');
+  easy.classList.toggle('light-mode');
+  medium.classList.toggle('light-mode');
+  hard.classList.toggle('light-mode');
+  minesQuantitySlider.classList.toggle('light-mode');
+  infoClicks.classList.toggle('light-mode');
+  infoTimer.classList.toggle('light-mode');
+  infoFlags.classList.toggle('light-mode');
+  gameFieldContainer.classList.toggle('light-mode');
+  gameField.classList.toggle('light-mode');
+}
+mode.addEventListener('click', changeMode);
