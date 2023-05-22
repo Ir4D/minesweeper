@@ -29,6 +29,7 @@ const gameField = document.createElement('div');
 const gameModal = document.createElement('div');
 const score = document.createElement('div');
 const scoreModal = document.createElement('div');
+const soundBtn = document.createElement('div');
 
 body.className = 'body';
 header.className = 'header';
@@ -61,6 +62,7 @@ flagsNumber.className = 'flags__number';
 gameFieldContainer.className = 'game__field-container';
 gameField.className = 'game__field';
 gameModal.className = 'game-modal';
+soundBtn.className = 'sound-btn';
 
 body.appendChild(header);
 header.appendChild(h1);
@@ -70,6 +72,7 @@ container.appendChild(menu);
 menu.appendChild(menuWrapper);
 menuWrapper.appendChild(newGame);
 menuWrapper.appendChild(score);
+menuWrapper.appendChild(soundBtn);
 menuWrapper.appendChild(mode);
 menu.appendChild(difficulty);
 difficulty.appendChild(easy);
@@ -135,6 +138,7 @@ let gameEnd = false;
 let lastTenResults = localStorage.getItem('lastTenResults') ? JSON.parse(localStorage.getItem('lastTenResults')) : [];
 let fieldDifficulty = localStorage.getItem('fieldDifficulty') || 'easy';
 let modeLoad = localStorage.getItem('modeLoad') || 'dark';
+let isMuted = localStorage.getItem('isMuted') || 'false';
 let timeLoad = [hour, minute, second].map(function (element) {
   if (element < 10) {
     return '0' + element;
@@ -686,10 +690,26 @@ newGame.addEventListener('click', startNewGame);
 let sound = new Audio();
 
 function playSound(src) {
-  sound = new Audio(src);
-  sound.volume = 0.5;
-  sound.play();
+  if (isMuted === 'false') {
+    sound = new Audio(src);
+    sound.volume = 0.5;
+    sound.play();
+    sound.muted = false;
+  } else if (isMuted === 'true') {
+    sound.muted = true;
+  }
 }
+
+function setSoundMode(e) {
+  if (!e.target.classList.contains('muted')) {
+    e.target.classList.add('muted');
+    isMuted = 'true';
+  } else {
+    e.target.classList.remove('muted');
+    isMuted = 'false';
+  }
+}
+soundBtn.addEventListener('click', setSoundMode);
 
 
 /* ************************ */
@@ -770,6 +790,7 @@ function changeMode() {
   gameFieldContainer.classList.toggle('light-mode');
   gameField.classList.toggle('light-mode');
   score.classList.toggle('light-mode');
+  soundBtn.classList.toggle('light-mode');
   if (body.classList.contains('light-mode')) {
     modeLoad = 'light';
   } else {
@@ -856,6 +877,7 @@ function setLocalStorage() {
   localStorage.setItem('hour', hour);
   localStorage.setItem('fieldDifficulty', fieldDifficulty);
   localStorage.setItem('modeLoad', modeLoad);
+  localStorage.setItem('isMuted', isMuted);
 }
 window.addEventListener('beforeunload', setLocalStorage);
 
@@ -955,6 +977,12 @@ function getLocalStorage() {
   } else {
     let modeLoad = 'dark';
   }
+
+  if (localStorage.getItem('isMuted')) {
+    let isMuted = localStorage.getItem('isMuted');
+  } else {
+    let isMuted = 'false';
+  }
 }
 window.addEventListener('load', getLocalStorage);
 
@@ -1045,6 +1073,11 @@ function setSavedField() {
     gameFieldContainer.classList.toggle('light-mode');
     gameField.classList.toggle('light-mode');
     score.classList.toggle('light-mode');
+    soundBtn.classList.toggle('light-mode');
+  }
+
+  if (isMuted === 'true') {
+    soundBtn.classList.add('muted');
   }
 }
 window.addEventListener('load', setSavedField);
