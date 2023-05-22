@@ -362,7 +362,7 @@ function handleClick(e) {
     addClicks();
   }
 
-  playSound('../assets/audio/click.wav');
+  playSound('./assets/audio/click.wav');
   e.target.classList.add('opened');
   firstMove = 'false';
 
@@ -497,7 +497,7 @@ function handleClick(e) {
       closeBtn.addEventListener('click', () => {
         modal.style.display = 'none';
       })
-      playSound('../assets/audio/lose.wav');
+      playSound('./assets/audio/lose.wav');
       gameEnd = true;
       stopGame();
     }
@@ -545,7 +545,7 @@ function setFlag(e) {
 
   if (!e.target.classList.contains('opened')) {
     e.target.classList.toggle('flag');
-    playSound('../assets/audio/flag.wav');
+    playSound('./assets/audio/flag.wav');
 
     if (e.target.classList.contains('flag')) {
       flaggedCells.add(e.target.attributes['cell-coords'].value);
@@ -642,7 +642,7 @@ function setWin(e) {
       modal.style.display = 'none';
     });
 
-    playSound('../assets/audio/win.wav');
+    playSound('./assets/audio/win.wav');
     gameEnd = true;
     stopGame();
   }
