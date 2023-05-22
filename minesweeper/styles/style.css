@@ -646,3 +646,20 @@
   box-shadow: inset #d5b0e0d5 2px 2px 4px, inset #d0a4dfd5 -2px -2px 4px, #b183bfd5 -2px -2px 4px -2px, 0 0 10px #c294ce;
 }
 
+@media (max-width: 600px) {
+  .game-title {
+    font-size: 28px;
+  }
+
+  .new-game,
+  .score,
+  .difficulty__easy,
+  .difficulty__medium,
+  .difficulty__hard {
+    font-size: 13px;
+  }
+
+  .game__info {
+    font-size: 14px;
+  }
+}

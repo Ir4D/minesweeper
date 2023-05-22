@@ -758,9 +758,9 @@ function setHardDifficulty(e) {
     medium.classList.remove('active');
     size = 25;
     field = Math.pow(size, 2);
-    container.style.width = '472px';
+    container.style.width = '460px';
     gameFieldContainer.style.width = '453px';
-    gameFieldContainer.style.marginLeft = '-10px';
+    gameFieldContainer.style.marginLeft = '-16px';
     gameField.style.gridTemplateColumns = 'repeat(25, 1fr)'
     startNewGame();
   }
