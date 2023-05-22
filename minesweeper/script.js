@@ -358,11 +358,11 @@ function handleClick(e) {
   }
 
   if (!e.target.classList.contains('opened')) {
+    playSound('./assets/audio/click.wav');
     clicksCount++;
     addClicks();
   }
 
-  playSound('./assets/audio/click.wav');
   e.target.classList.add('opened');
   firstMove = 'false';
 
