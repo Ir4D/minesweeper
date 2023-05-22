@@ -105,7 +105,6 @@ easy.classList.add('active');
 h1.innerHTML = 'Minesweeper';
 newGame.innerHTML = 'New game';
 score.innerHTML = 'Score';
-timerNumber.innerHTML = '00:00:00';
 easy.innerHTML = 'Easy';
 medium.innerHTML = 'Medium';
 hard.innerHTML = 'Hard';
@@ -114,29 +113,38 @@ minesQuantitySlider.min = '10';
 minesQuantitySlider.max = '99';
 minesQuantitySlider.value = '10';
 
-let size = 10;
-let minesAmount = 10;
+let size = localStorage.getItem('size') || 10;
+let minesAmount = localStorage.getItem('minesAmount') || 10;
 let field = Math.pow(size, 2);
-let mines = [];
-let dangerNumbers = [];
+let mines = localStorage.getItem('mines') ? JSON.parse(localStorage.getItem('mines')) : [];
+let dangerNumbers = localStorage.getItem('dangerNumbers') ? JSON.parse(localStorage.getItem('dangerNumbers')) : [];
 let x = 0;
 let y = 0;
-let openedCells = [];
-let dangerMap = new Map();
-let clicksCount = 0;
+let openedCells = localStorage.getItem('openedCells') ? JSON.parse(localStorage.getItem('openedCells')) : [];
+let dangerMap = localStorage.getItem('myMap') ? new Map(JSON.parse(localStorage.myMap)) : new Map();
+let clicksCount = localStorage.getItem('clicksCount') || 0;
 let flagsAmount = minesAmount;
-let flaggedCells = new Set();
+let flaggedCells = localStorage.getItem('flaggedCellsLS') ? new Set(JSON.parse(localStorage.getItem('flaggedCellsLS'))) : new Set();
 let timeCount;
-let firstClick;
-let firstMove = true;
-let second = 00,
-    minute = 00,
-    hour = 00;
+let firstClick = localStorage.getItem('firstClick') || undefined;
+let firstMove = localStorage.getItem('firstMove') || 'true';
+let second = localStorage.getItem('second') || 0;
+let minute = localStorage.getItem('minute') || 0;
+let hour = localStorage.getItem('hour') || 0;
 let gameEnd = false;
-let lastTenResults = [];
+let lastTenResults = localStorage.getItem('lastTenResults') ? JSON.parse(localStorage.getItem('lastTenResults')) : [];
+let fieldDifficulty = localStorage.getItem('fieldDifficulty') || 'easy';
+let modeLoad = localStorage.getItem('modeLoad') || 'dark';
+let timeLoad = [hour, minute, second].map(function (element) {
+  if (element < 10) {
+    return '0' + element;
+  } else {
+    return element;
+  }
+})
+timerNumber.innerHTML = timeLoad.join(':');
 clicksNumber.innerHTML = clicksCount;
-flagsNumber.innerHTML = flagsAmount;
-
+flagsNumber.innerHTML = flagsAmount  - flaggedCells.size;
 
 /* ************************ */
 /* TIMER */
@@ -302,7 +310,7 @@ function setDangerousCells(firstClick) {
     dangerCell.classList.add('danger');
     dangerCell.classList.add(`danger-${numberOfMines}`);
     dangerMap.set(number, numberOfMines);
-  })
+  });
 };
 
 
@@ -335,7 +343,7 @@ function addClicks() {
 function handleClick(e) {
   let cells = document.querySelectorAll('.cell');
 
-  if (firstMove) {
+  if (firstMove === 'true') {
     firstClick = e.target.attributes['cell-coords'].value;
     setDangerousCells(firstClick);
   }
@@ -344,44 +352,52 @@ function handleClick(e) {
   if (e.target.classList.contains('flag')) {
     return;
   }
+
   if (!e.target.classList.contains('opened')) {
     clicksCount++;
     addClicks();
   }
+
   playSound('../assets/audio/click.wav');
   e.target.classList.add('opened');
-  firstMove = false;
+  firstMove = 'false';
+
   if (dangerMap.has(cellValue)) {
     e.target.innerHTML = dangerMap.get(cellValue);
   }
   openedCells.push(cellValue);
+
   if (e.target.classList.contains('cell')) {
     let openedCellCoords = e.target.attributes['cell-coords'].value;
     let targetCellX = Number(openedCellCoords.split(',')[0]);
     let targetCellY = Number(openedCellCoords.split(',')[1]);
+
+    function checkFlag(cell) {
+      if (cell.classList.contains('flag')) {
+        if (openedCells.includes(cell.attributes['cell-coords'].value)) {
+          cell.classList.toggle('flag');
+          flaggedCells.delete(cell.attributes['cell-coords'].value);
+          updateFlagsAmount();
+        }
+      } 
+    }
+
+    function setOpenClass(cell) {
+      if (openedCells.includes(cell.attributes['cell-coords'].value)) {
+        cell.classList.add('opened');
+      }
+    }
     
     function findEmptyCells(targetCellX, targetCellY) {
       cells.forEach(cell => {
         let x = Number(cell.attributes['cell-coords'].value.split(',')[0]);
         let y = Number(cell.attributes['cell-coords'].value.split(',')[1]);
 
-        function checkFlag() {
-          if (cell.classList.contains('flag')) {
-            cell.classList.toggle('flag');
-            flaggedCells.delete(cell.attributes['cell-coords'].value);
-            updateFlagsAmount();
-          } 
-        }
-
         if (x === targetCellX + 1 && y === targetCellY) {
           if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
-            checkFlag();
-            cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             findEmptyCells(x, y);
           } else if (dangerNumbers.includes(`${x},${y}`)) {
-            checkFlag();
-            cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             cell.innerHTML = dangerMap.get(`${x},${y}`);
           }
@@ -389,13 +405,9 @@ function handleClick(e) {
 
         if (x === targetCellX + 1 && y === targetCellY + 1) {
           if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
-            checkFlag();
-            cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             findEmptyCells(x, y);
           } else if (dangerNumbers.includes(`${x},${y}`)) {
-            checkFlag();
-            cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             cell.innerHTML = dangerMap.get(`${x},${y}`);
           }
@@ -403,13 +415,9 @@ function handleClick(e) {
 
         if (x === targetCellX && y === targetCellY + 1) {
           if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
-            checkFlag();
-            cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             findEmptyCells(x, y);
           } else if (dangerNumbers.includes(`${x},${y}`)) {
-            checkFlag();
-            cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             cell.innerHTML = dangerMap.get(`${x},${y}`);
           }
@@ -417,13 +425,9 @@ function handleClick(e) {
 
         if (x === targetCellX - 1 && y === targetCellY + 1) {
           if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
-            checkFlag();
-            cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             findEmptyCells(x, y);
           } else if (dangerNumbers.includes(`${x},${y}`)) {
-            checkFlag();
-            cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             cell.innerHTML = dangerMap.get(`${x},${y}`);
           }
@@ -431,13 +435,9 @@ function handleClick(e) {
 
         if (x === targetCellX - 1 && y === targetCellY) {
           if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
-            checkFlag();
-            cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             findEmptyCells(x, y);
           } else if (dangerNumbers.includes(`${x},${y}`)) {
-            checkFlag();
-            cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             cell.innerHTML = dangerMap.get(`${x},${y}`);
           }
@@ -445,13 +445,9 @@ function handleClick(e) {
 
         if (x === targetCellX - 1 && y === targetCellY - 1) {
           if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
-            checkFlag();
-            cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             findEmptyCells(x, y);
           } else if (dangerNumbers.includes(`${x},${y}`)) {
-            checkFlag();
-            cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             cell.innerHTML = dangerMap.get(`${x},${y}`);
           }
@@ -459,13 +455,9 @@ function handleClick(e) {
 
         if (x === targetCellX && y === targetCellY - 1) {
           if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
-            checkFlag();
-            cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             findEmptyCells(x, y);
           } else if (dangerNumbers.includes(`${x},${y}`)) {
-            checkFlag();
-            cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             cell.innerHTML = dangerMap.get(`${x},${y}`);
           }
@@ -473,17 +465,18 @@ function handleClick(e) {
 
         if (x === targetCellX + 1 && y === targetCellY - 1) {
           if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
-            checkFlag();
-            cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             findEmptyCells(x, y);
           } else if (dangerNumbers.includes(`${x},${y}`)) {
-            checkFlag();
-            cell.classList.add('opened');
             openedCells.push(`${x},${y}`);
             cell.innerHTML = dangerMap.get(`${x},${y}`);
           }
         }
+      });
+
+      cells.forEach(cell => {
+        checkFlag(cell);
+        setOpenClass(cell);
       });
     }
 
@@ -576,48 +569,52 @@ function updateFlagsAmount() {
 /* ************************ */
 
 function isWinGameFlags(mines, flaggedCells) {
-  let a = mines.sort((a, b) => a.localeCompare(b));
-  let b = Array.from(flaggedCells).sort((a, b) => a.localeCompare(b));
-
-  const isEqual = (a, b) => {
-    if (a.length === b.length && a.every((value, index) => value === b[index])) {
-      return true;
+  if (mines.length > 0) { 
+    let a = mines.sort((a, b) => a.localeCompare(b));
+    let b = Array.from(flaggedCells).sort((a, b) => a.localeCompare(b));
+  
+    const isEqual = (a, b) => {
+      if (a.length === b.length && a.every((value, index) => value === b[index])) {
+        return true;
+      }
+      else {
+        return false;
+      }
     }
-    else {
-      return false;
-    }
+  
+    let equal = isEqual(a, b);
+    return equal;
   }
-
-  let equal = isEqual(a, b);
-  return equal;
 };
 
 let closedCells;
 
 function isWinGameNoFlags() {
-  closedCells = [];
-  cells = document.querySelectorAll('.cell');
-
-  cells.forEach(cell => {
-    if (!openedCells.includes(cell.attributes['cell-coords'].value)) {
-      closedCells.push(cell.attributes['cell-coords'].value);
+  if (mines.length > 0) {
+    closedCells = [];
+    cells = document.querySelectorAll('.cell');
+  
+    cells.forEach(cell => {
+      if (!openedCells.includes(cell.attributes['cell-coords'].value)) {
+        closedCells.push(cell.attributes['cell-coords'].value);
+      }
+    });
+  
+    let a = mines.sort((a, b) => a.localeCompare(b));
+    let b = closedCells.sort((a, b) => a.localeCompare(b));
+  
+    const isEqual = (a, b) => {
+      if (a.length === b.length && a.every((value, index) => value === b[index])) {
+        return true;
+      }
+      else {
+        return false;
+      }
     }
-  });
-
-  let a = mines.sort((a, b) => a.localeCompare(b));
-  let b = closedCells.sort((a, b) => a.localeCompare(b));
-
-  const isEqual = (a, b) => {
-    if (a.length === b.length && a.every((value, index) => value === b[index])) {
-      return true;
-    }
-    else {
-      return false;
-    }
+  
+    let equal = isEqual(a, b);
+    return equal;
   }
-
-  let equal = isEqual(a, b);
-  return equal;
 }
 
 function setWin(e) {
@@ -650,10 +647,10 @@ gameField.addEventListener('click', setWin);
 function startNewGame() {
   minesAmount = minesQuantitySlider.value;
   firstClick = true;
-  firstMove = true;
-  second = 00;
-  minute = 00;
-  hour = 00;
+  firstMove = 'true';
+  second = 0;
+  minute = 0;
+  hour = 0;
   timerNumber.innerHTML = '00:00:00';
   flagsAmount = minesAmount;
   flagsNumber.innerHTML = flagsAmount;
@@ -695,6 +692,7 @@ function playSound(src) {
 
 function setEasyDifficulty(e) {
   if (!e.target.classList.contains('active')) {
+    fieldDifficulty = 'easy';
     e.target.classList.add('active');
     medium.classList.remove('active');
     hard.classList.remove('active');
@@ -711,6 +709,7 @@ easy.addEventListener('click', setEasyDifficulty);
 
 function setMediumDifficulty(e) {
   if (!e.target.classList.contains('active')) {
+    fieldDifficulty = 'medium';
     e.target.classList.add('active');
     easy.classList.remove('active');
     hard.classList.remove('active');
@@ -727,6 +726,7 @@ medium.addEventListener('click', setMediumDifficulty);
 
 function setHardDifficulty(e) {
   if (!e.target.classList.contains('active')) {
+    fieldDifficulty = 'hard';
     e.target.classList.add('active');
     easy.classList.remove('active');
     medium.classList.remove('active');
@@ -764,6 +764,11 @@ function changeMode() {
   gameFieldContainer.classList.toggle('light-mode');
   gameField.classList.toggle('light-mode');
   score.classList.toggle('light-mode');
+  if (body.classList.contains('light-mode')) {
+    modeLoad = 'light';
+  } else {
+    modeLoad = 'dark';
+  }
 }
 mode.addEventListener('click', changeMode);
 
@@ -822,3 +827,218 @@ function showLastResults(e) {
   });
 }
 score.addEventListener('click', showLastResults);
+
+
+/* ************************ */
+/* SAVE GAME TO LOCALSTORAGE */
+/* ************************ */
+
+function setLocalStorage() {
+  localStorage.setItem('size', size);
+  localStorage.setItem('minesAmount', minesAmount);
+  localStorage.setItem('mines', JSON.stringify(mines));
+  localStorage.setItem('dangerNumbers', JSON.stringify(dangerNumbers));
+  localStorage.setItem('openedCells', JSON.stringify(openedCells));
+  localStorage.setItem('clicksCount', clicksCount);
+  localStorage.myMap = JSON.stringify(Array.from(dangerMap.entries())); 
+  localStorage.flaggedCellsLS = JSON.stringify([...flaggedCells]); 
+  localStorage.setItem('firstClick', firstClick);
+  localStorage.setItem('firstMove', firstMove);
+  localStorage.setItem('lastTenResults', JSON.stringify(lastTenResults));
+  localStorage.setItem('second', second);
+  localStorage.setItem('minute', minute);
+  localStorage.setItem('hour', hour);
+  localStorage.setItem('fieldDifficulty', fieldDifficulty);
+  localStorage.setItem('modeLoad', modeLoad);
+}
+window.addEventListener('beforeunload', setLocalStorage);
+
+function getLocalStorage() {
+  if (localStorage.getItem('size')) {
+    let size = localStorage.getItem('size');
+  } else {
+    let size = 10;
+  }
+
+  if (localStorage.getItem('minesAmount')) {
+    let minesAmount = localStorage.getItem('minesAmount');
+  } else {
+    let minesAmount = 10;
+  }
+
+  if (localStorage.getItem('mines')) {
+    let mines = JSON.parse(localStorage.getItem('mines'));
+  } else {
+    let mines = [];
+  }
+
+  if (localStorage.getItem('dangerNumbers')) {
+    let dangerNumbers = JSON.parse(localStorage.getItem('dangerNumbers'));
+  } else {
+    let dangerNumbers = [];
+  }
+
+  if (localStorage.getItem('openedCells')) {
+    let openedCells = JSON.parse(localStorage.getItem('openedCells'));
+  } else {
+    let openedCells = [];
+  }
+
+  if (localStorage.getItem('clicksCount')) {
+    clicksCount = localStorage.getItem('clicksCount');
+  } else {
+    let clicksCount = 0;
+  }
+
+  if (localStorage.getItem('myMap')) {
+    let dangerMap = new Map(JSON.parse(localStorage.myMap));
+  } else {
+    let dangerMap = new Map();
+  }
+
+  if (localStorage.getItem('flaggedCellsLS')) {
+    let flaggedCells = new Set(JSON.parse(localStorage.getItem('flaggedCellsLS')));
+  } else {
+    let flaggedCells = new Set();
+  }
+
+  if (localStorage.getItem('firstClick')) {
+    let firstClick = localStorage.getItem('firstClick');
+  } else {
+    let firstClick;
+  }
+
+  if (localStorage.getItem('firstMove')) {
+    let firstMove = localStorage.getItem('firstMove');
+  } else {
+    let firstMove = 'true';
+  }
+
+  if (localStorage.getItem('lastTenResults')) {
+    let lastTenResults = JSON.parse(localStorage.getItem('lastTenResults'));
+  } else {
+    let lastTenResults = [];
+  }
+
+  if (localStorage.getItem('second')) {
+    let second = localStorage.getItem('second');
+  } else {
+    let second = 0;
+  }
+
+  if (localStorage.getItem('minute')) {
+    let minute = localStorage.getItem('minute');
+  } else {
+    let minute = 0;
+  }
+
+  if (localStorage.getItem('hour')) {
+    let hour = localStorage.getItem('hour');
+  } else {
+    let hour = 0;
+  }
+
+  if (localStorage.getItem('fieldDifficulty')) {
+    let fieldDifficulty = localStorage.getItem('fieldDifficulty');
+  } else {
+    let fieldDifficulty = 'easy';
+  }
+
+  if (localStorage.getItem('modeLoad')) {
+    let modeLoad = localStorage.getItem('modeLoad');
+  } else {
+    let modeLoad = 'dark';
+  }
+}
+window.addEventListener('load', getLocalStorage);
+
+function setSavedField() {
+  cells.forEach((cell) => {
+    let coordsLS = cell.attributes['cell-coords'].value;
+
+    if (dangerNumbers.includes(coordsLS)) {
+      let numberOfMinesLS = dangerMap.get(`${coordsLS}`);
+      cell.classList.add('danger');
+      cell.classList.add(`danger-${numberOfMinesLS}`);
+      cell.setAttribute('cell-number', numberOfMinesLS);
+
+      if (openedCells.includes(coordsLS)) {
+        cell.innerHTML = dangerMap.get(`${coordsLS}`);
+      }
+    }
+
+    if (mines.includes(coordsLS)) {
+      cell.classList.add('mined');
+    }
+
+    if (openedCells.includes(coordsLS)) {
+      cell.classList.add('opened');
+    }
+
+    let flaggedCellsArr = [...flaggedCells];
+
+    if (flaggedCellsArr.includes(coordsLS)) {
+      cell.classList.add('flag');
+    }
+  });
+
+  clicksNumber.innerHTML = clicksCount;
+  flagsNumber.innerHTML = flagsAmount - flaggedCells.size;
+
+  if (fieldDifficulty === 'easy') {
+    easy.classList.add('active');
+    medium.classList.remove('active');
+    hard.classList.remove('active');
+    size = 10;
+    field = Math.pow(size, 2);
+    container.style.width = '330px';
+    gameFieldContainer.style.width = '183px';
+    gameFieldContainer.style.margin = '0 auto';
+    gameField.style.gridTemplateColumns = 'repeat(10, 1fr)'
+  }
+
+  if (fieldDifficulty === 'medium') {
+    medium.classList.add('active');
+    easy.classList.remove('active');
+    hard.classList.remove('active');
+    size = 15;
+    field = Math.pow(size, 2);
+    container.style.width = '330px';
+    gameFieldContainer.style.width = '274px';
+    gameFieldContainer.style.margin = '0 auto';
+    gameField.style.gridTemplateColumns = 'repeat(15, 1fr)'
+  } 
+
+  if (fieldDifficulty === 'hard') {
+    hard.classList.add('active');
+    easy.classList.remove('active');
+    medium.classList.remove('active');
+    size = 25;
+    field = Math.pow(size, 2);
+    container.style.width = '472px';
+    gameFieldContainer.style.width = '453px';
+    gameFieldContainer.style.marginLeft = '-10px';
+    gameField.style.gridTemplateColumns = 'repeat(25, 1fr)'
+  }
+
+  if (modeLoad === 'light') {
+    body.classList.toggle('light-mode');
+    header.classList.toggle('light-mode');
+    h1.classList.toggle('light-mode');
+    container.classList.toggle('light-mode');
+    menu.classList.toggle('light-mode');
+    newGame.classList.toggle('light-mode');
+    mode.classList.toggle('light-mode');
+    easy.classList.toggle('light-mode');
+    medium.classList.toggle('light-mode');
+    hard.classList.toggle('light-mode');
+    minesQuantitySlider.classList.toggle('light-mode');
+    infoClicks.classList.toggle('light-mode');
+    infoTimer.classList.toggle('light-mode');
+    infoFlags.classList.toggle('light-mode');
+    gameFieldContainer.classList.toggle('light-mode');
+    gameField.classList.toggle('light-mode');
+    score.classList.toggle('light-mode');
+  }
+}
+window.addEventListener('load', setSavedField);
