@@ -533,6 +533,12 @@ let cells = document.querySelectorAll('.cell');
 function setFlag(e) {
   e.preventDefault();
 
+  if (firstMove === 'true') {
+    firstClick = e.target.attributes['cell-coords'].value;
+    setDangerousCells(firstClick);
+  }
+  firstMove = 'false';
+
   if (!e.target.classList.contains('opened')) {
     e.target.classList.toggle('flag');
     playSound('../assets/audio/flag.wav');
