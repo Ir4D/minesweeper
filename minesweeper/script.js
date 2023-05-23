@@ -21,6 +21,9 @@ const clicksNumber = document.createElement('div');
 const infoTimer = document.createElement('div');
 const timerIcon = document.createElement('div');
 const timerNumber = document.createElement('div');
+const infoMines = document.createElement('div');
+const minesIcon = document.createElement('div');
+const minesNumber = document.createElement('div');
 const infoFlags = document.createElement('div');
 const flagsIcon = document.createElement('div');
 const flagsNumber = document.createElement('div');
@@ -56,6 +59,9 @@ clicksNumber.className = 'clicks__number';
 infoTimer.className = 'info__timer';
 timerIcon.className = 'timer__icon';
 timerNumber.className = 'timer__number';
+infoMines.className = 'info__mines';
+minesIcon.className = 'mines__icon';
+minesNumber.className = 'mines__number';
 infoFlags.className = 'info__flags';
 flagsIcon.className = 'flags__icon';
 flagsNumber.className = 'flags__number';
@@ -95,6 +101,11 @@ infoTimer.classList.add('timer');
 infoTimer.appendChild(timerIcon);
 timerIcon.classList.add('icon');
 infoTimer.appendChild(timerNumber);
+gameInfo.appendChild(infoMines);
+infoMines.classList.add('info-mines');
+infoMines.appendChild(minesIcon);
+minesIcon.classList.add('icon');
+infoMines.appendChild(minesNumber);
 gameInfo.appendChild(infoFlags);
 infoFlags.classList.add('flags');
 infoFlags.appendChild(flagsIcon);
@@ -126,7 +137,7 @@ let y = 0;
 let openedCells = localStorage.getItem('openedCells') ? JSON.parse(localStorage.getItem('openedCells')) : [];
 let dangerMap = localStorage.getItem('myMap') ? new Map(JSON.parse(localStorage.myMap)) : new Map();
 let clicksCount = localStorage.getItem('clicksCount') || 0;
-let flagsAmount = minesAmount;
+let minesAmountIcon = minesAmount;
 let flaggedCells = localStorage.getItem('flaggedCellsLS') ? new Set(JSON.parse(localStorage.getItem('flaggedCellsLS'))) : new Set();
 let timeCount;
 let firstClick = localStorage.getItem('firstClick') || undefined;
@@ -148,7 +159,8 @@ let timeLoad = [hour, minute, second].map(function (element) {
 })
 timerNumber.innerHTML = timeLoad.join(':');
 clicksNumber.innerHTML = clicksCount;
-flagsNumber.innerHTML = flagsAmount  - flaggedCells.size;
+minesNumber.innerHTML = minesAmountIcon  - flaggedCells.size;
+flagsNumber.innerHTML = flaggedCells.size;
 
 /* ************************ */
 /* TIMER */
@@ -397,81 +409,83 @@ function handleClick(e) {
         let x = Number(cell.attributes['cell-coords'].value.split(',')[0]);
         let y = Number(cell.attributes['cell-coords'].value.split(',')[1]);
 
+        let flaggedCellsArr = [...flaggedCells];
+
         if (x === targetCellX + 1 && y === targetCellY) {
-          if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
+          if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`) && !flaggedCellsArr.includes(`${x},${y}`)) {
             openedCells.push(`${x},${y}`);
             findEmptyCells(x, y);
-          } else if (dangerNumbers.includes(`${x},${y}`)) {
+          } else if (dangerNumbers.includes(`${x},${y}`) && !flaggedCellsArr.includes(`${x},${y}`)) {
             openedCells.push(`${x},${y}`);
             cell.innerHTML = dangerMap.get(`${x},${y}`);
           }
         }
 
         if (x === targetCellX + 1 && y === targetCellY + 1) {
-          if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
+          if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`) && !flaggedCellsArr.includes(`${x},${y}`)) {
             openedCells.push(`${x},${y}`);
             findEmptyCells(x, y);
-          } else if (dangerNumbers.includes(`${x},${y}`)) {
+          } else if (dangerNumbers.includes(`${x},${y}`) && !flaggedCellsArr.includes(`${x},${y}`)) {
             openedCells.push(`${x},${y}`);
             cell.innerHTML = dangerMap.get(`${x},${y}`);
           }
         }
 
         if (x === targetCellX && y === targetCellY + 1) {
-          if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
+          if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`) && !flaggedCellsArr.includes(`${x},${y}`)) {
             openedCells.push(`${x},${y}`);
             findEmptyCells(x, y);
-          } else if (dangerNumbers.includes(`${x},${y}`)) {
+          } else if (dangerNumbers.includes(`${x},${y}`) && !flaggedCellsArr.includes(`${x},${y}`)) {
             openedCells.push(`${x},${y}`);
             cell.innerHTML = dangerMap.get(`${x},${y}`);
           }
         }
 
         if (x === targetCellX - 1 && y === targetCellY + 1) {
-          if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
+          if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`) && !flaggedCellsArr.includes(`${x},${y}`)) {
             openedCells.push(`${x},${y}`);
             findEmptyCells(x, y);
-          } else if (dangerNumbers.includes(`${x},${y}`)) {
+          } else if (dangerNumbers.includes(`${x},${y}`) && !flaggedCellsArr.includes(`${x},${y}`)) {
             openedCells.push(`${x},${y}`);
             cell.innerHTML = dangerMap.get(`${x},${y}`);
           }
         }
 
         if (x === targetCellX - 1 && y === targetCellY) {
-          if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
+          if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`) && !flaggedCellsArr.includes(`${x},${y}`)) {
             openedCells.push(`${x},${y}`);
             findEmptyCells(x, y);
-          } else if (dangerNumbers.includes(`${x},${y}`)) {
+          } else if (dangerNumbers.includes(`${x},${y}`) && !flaggedCellsArr.includes(`${x},${y}`)) {
             openedCells.push(`${x},${y}`);
             cell.innerHTML = dangerMap.get(`${x},${y}`);
           }
         }
 
         if (x === targetCellX - 1 && y === targetCellY - 1) {
-          if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
+          if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`) && !flaggedCellsArr.includes(`${x},${y}`)) {
             openedCells.push(`${x},${y}`);
             findEmptyCells(x, y);
-          } else if (dangerNumbers.includes(`${x},${y}`)) {
+          } else if (dangerNumbers.includes(`${x},${y}`) && !flaggedCellsArr.includes(`${x},${y}`)) {
             openedCells.push(`${x},${y}`);
             cell.innerHTML = dangerMap.get(`${x},${y}`);
           }
         }
 
         if (x === targetCellX && y === targetCellY - 1) {
-          if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
+          if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`) && !flaggedCellsArr.includes(`${x},${y}`)) {
             openedCells.push(`${x},${y}`);
             findEmptyCells(x, y);
-          } else if (dangerNumbers.includes(`${x},${y}`)) {
+          } else if (dangerNumbers.includes(`${x},${y}`) && !flaggedCellsArr.includes(`${x},${y}`)) {
             openedCells.push(`${x},${y}`);
             cell.innerHTML = dangerMap.get(`${x},${y}`);
           }
         }
 
         if (x === targetCellX + 1 && y === targetCellY - 1) {
-          if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`)) {
+          if (!mines.includes(`${x},${y}`) && !dangerNumbers.includes(`${x},${y}`) && !openedCells.includes(`${x},${y}`) && !flaggedCellsArr.includes(`${x},${y}`)) {
             openedCells.push(`${x},${y}`);
             findEmptyCells(x, y);
-          } else if (dangerNumbers.includes(`${x},${y}`)) {
+          } else if (dangerNumbers.includes(`${x},${y}`) && !flaggedCellsArr.includes(`${x},${y}`)) {
             openedCells.push(`${x},${y}`);
             cell.innerHTML = dangerMap.get(`${x},${y}`);
           }
@@ -502,12 +516,12 @@ function handleClick(e) {
       stopGame();
     }
 
-    cells.forEach(cell => {
-      if (cell.classList.contains('opened')) {
-        flaggedCells.delete(cell.attributes['cell-coords'].value);
-        updateFlagsAmount();
-      }
-    });
+    // cells.forEach(cell => {
+    //   if (cell.classList.contains('opened')) {
+    //     flaggedCells.delete(cell.attributes['cell-coords'].value);
+    //     updateFlagsAmount();
+    //   }
+    // });
   }
 }
 gameField.addEventListener('click', handleClick);
@@ -561,7 +575,8 @@ function setFlag(e) {
 gameField.addEventListener('contextmenu', setFlag);
 
 function updateFlagsAmount() {
-  flagsNumber.innerHTML = flagsAmount - flaggedCells.size;
+  minesNumber.innerHTML = minesAmountIcon - flaggedCells.size;
+  flagsNumber.innerHTML = flaggedCells.size;
   cells = document.querySelectorAll('.cell');
 
   cells.forEach(cell => {
@@ -661,19 +676,20 @@ function startNewGame() {
   second = 0;
   minute = 0;
   hour = 0;
-  timerNumber.innerHTML = '00:00:00';
-  flagsAmount = minesAmount;
-  flagsNumber.innerHTML = flagsAmount;
-  clicksCount = 0;
-  clicksNumber.innerHTML = clicksCount;
-  x = 0;
-  y = 0;
-  gameEnd = false;
   mines = [];
   dangerNumbers = [];
   openedCells = [];
   dangerMap.clear();
   flaggedCells.clear();
+  timerNumber.innerHTML = '00:00:00';
+  minesAmountIcon = minesAmount;
+  minesNumber.innerHTML = minesAmountIcon;
+  flagsNumber.innerHTML = flaggedCells.size;
+  clicksCount = 0;
+  clicksNumber.innerHTML = clicksCount;
+  x = 0;
+  y = 0;
+  gameEnd = false;
   gameField.innerHTML = '';
   initField();
   gameField.addEventListener('click', handleClick);
@@ -786,6 +802,7 @@ function changeMode() {
   minesQuantitySlider.classList.toggle('light-mode');
   infoClicks.classList.toggle('light-mode');
   infoTimer.classList.toggle('light-mode');
+  infoMines.classList.toggle('light-mode');
   infoFlags.classList.toggle('light-mode');
   gameFieldContainer.classList.toggle('light-mode');
   gameField.classList.toggle('light-mode');
@@ -1017,7 +1034,8 @@ function setSavedField() {
   });
 
   clicksNumber.innerHTML = clicksCount;
-  flagsNumber.innerHTML = flagsAmount - flaggedCells.size;
+  minesNumber.innerHTML = minesAmountIcon - flaggedCells.size;
+  flagsNumber.innerHTML = flaggedCells.size;
 
   if (fieldDifficulty === 'easy') {
     easy.classList.add('active');
@@ -1069,6 +1087,7 @@ function setSavedField() {
     minesQuantitySlider.classList.toggle('light-mode');
     infoClicks.classList.toggle('light-mode');
     infoTimer.classList.toggle('light-mode');
+    infoMines.classList.toggle('light-mode');
     infoFlags.classList.toggle('light-mode');
     gameFieldContainer.classList.toggle('light-mode');
     gameField.classList.toggle('light-mode');

@@ -117,12 +117,14 @@
 
 .info__clicks,
 .info__timer,
+.info__mines,
 .info__flags {
   display: flex;
   justify-content: space-around;
-  width: 55px;
+  width: 54px;
   height: 28px;
   padding: 4px 6px;
+  font-size: 14px;
   color: #000000;
   background-color: #daa78c;
   border-radius: 4px;
@@ -150,9 +152,14 @@
   background-image: url('../assets/img/time.png');
 }
 
-.flags__icon {
+.mines__icon {
   background-image: url('../assets/img/mine.png');
-  background-position: 0px 1px;
+}
+
+.flags__icon {
+  background-image: url('../assets/img/flag.png');
+  background-position: 2px 2px;
+  background-size: 17px 17px;
 }
 
 .game__field-container {
@@ -409,6 +416,7 @@
 
 .info__clicks.light-mode,
 .info__timer.light-mode,
+.info__mines.light-mode,
 .info__flags.light-mode {
   background-color: #f6dfd2;
   background: #f6dfd2 radial-gradient(circle at 0 0, #f6d1bdca, #d3b09dcc);
