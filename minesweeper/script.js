@@ -515,13 +515,6 @@ function handleClick(e) {
       gameEnd = true;
       stopGame();
     }
-
-    // cells.forEach(cell => {
-    //   if (cell.classList.contains('opened')) {
-    //     flaggedCells.delete(cell.attributes['cell-coords'].value);
-    //     updateFlagsAmount();
-    //   }
-    // });
   }
 }
 gameField.addEventListener('click', handleClick);
